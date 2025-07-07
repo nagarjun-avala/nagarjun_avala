@@ -1,20 +1,27 @@
 import React from "react";
 import { Metadata } from "next";
 import { Calendar, User } from "lucide-react";
+import { motion } from "framer-motion";
 
 export const metadata: Metadata = {
   title: "How I Built My Portfolio Using Next.js",
-  description: "An overview of the tech stack and design decisions I made while building my personal portfolio website.",
+  description:
+    "An overview of the tech stack and design decisions I made while building my personal portfolio website.",
 };
 
 const BllogsComponent = () => {
   return (
-    <article className="prose prose-invert dark:prose-invert max-w-3xl mx-auto py-20 px-4">
+    <motion.article
+      className="prose prose-invert dark:prose-invert max-w-3xl mx-auto py-20 px-4"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
       <header className="mb-6 border-b border-white/10 pb-4">
-        <h1 className="text-4xl font-bold">How I Built My Portfolio Using Next.js ?</h1>
+        <h1 className="text-4xl font-bold">How I Built My Portfolio Using Next.js</h1>
         <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
           <span className="flex items-center gap-1">
-            <User size={14} /> Nagarjun Avala
+            <User size={14} /> Nagarjun A
           </span>
           <span className="flex items-center gap-1">
             <Calendar size={14} /> July 6, 2025
@@ -22,7 +29,12 @@ const BllogsComponent = () => {
         </div>
       </header>
 
-      <section>
+      <motion.section
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        viewport={{ once: true, amount: 0.2 }}
+      >
         <p>
           When I set out to build my personal portfolio, I wanted something that felt fast,
           responsive, and visually impressive. I chose <strong>Next.js</strong> for its SSR and routing
@@ -43,6 +55,9 @@ const BllogsComponent = () => {
           <li>🗂 Filterable projects section using tag-based chips</li>
           <li>🌗 Light/Dark theme toggle with next-themes</li>
           <li>📨 Contact form connected to /api/contact with backend handler</li>
+          <li>🛡️ Honeypot protection to prevent spam bots</li>
+          <li>📧 Email integration via Resend or Nodemailer</li>
+          <li>🎬 Animated form fields and components as they appear</li>
         </ul>
 
         <h2>What I Learned</h2>
@@ -55,8 +70,8 @@ const BllogsComponent = () => {
         <footer className="mt-10 border-t border-white/10 pt-4 text-sm text-muted-foreground">
           Thanks for reading! More posts coming soon...
         </footer>
-      </section>
-    </article>
+      </motion.section>
+    </motion.article>
   );
 }
 
