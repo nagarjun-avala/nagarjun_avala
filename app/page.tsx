@@ -87,19 +87,17 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white px-4 py-10 sm:px-6 md:px-10 font-sans transition-all duration-300">
       {/* Scroll Progress Bar */}
-      <motion.div
-  className="fixed top-0 left-0 right-0 h-2 z-50 bg-gradient-to-r from-purple-500 via-cyan-400 to-pink-500 animate-pulse rounded-full opacity-0 origin-left shadow-[0_0_8px_rgba(0,255,255,0.5),0_0_16px_rgba(255,0,255,0.4),0_0_24px_rgba(255,255,0,0.2)]"
-  style={{
-    scaleX,
-    boxShadow: `0 0 ${20 + scaleX.get() * 30}px rgba(0,255,255,0.6),
-                0 0 ${30 + scaleX.get() * 40}px rgba(255,0,255,0.5),
-                0 0 ${40 + scaleX.get() * 50}px rgba(255,255,0,0.3)`
-  }}
-  animate={scrollControls}
-  initial={{ opacity: 0 }}
+      <motion.div 
+      className="fixed top-0 left-0 right-0 h-2 z-50 bg-gradient-to-r from-purple-500 via-cyan-400 to-pink-500 animate-pulse rounded-full opacity-0 origin-left shadow-[0_0_8px_rgba(0,255,255,0.5),0_0_16px_rgba(255,0,255,0.4),0_0_24px_rgba(255,255,0,0.2)]" 
+      style={{
+        scaleX,
+        boxShadow: `0 0 ${20 + scaleX.get() * 30}px rgba(0,255,255,0.6),
+                    0 0 ${30 + scaleX.get() * 40}px rgba(255,0,255,0.5),
+                    0 0 ${40 + scaleX.get() * 50}px rgba(255,255,0,0.3)`
+        }}
+      animate={scrollControls}
+      initial={{ opacity: 0 }}
 />
-
-
 
       {/* Back to Top Button */}
       {showTopBtn && (
