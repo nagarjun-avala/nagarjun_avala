@@ -38,8 +38,10 @@ async function getGeoLocation(ip: string) {
 export async function POST(req: Request) {
     try {
         const ip = getClientIp(req);
+        console.log("Visitor IP:", ip);
 
         let visitor = await db.visitor.findUnique({ where: { ip } });
+        console.log("Existing visitor:", visitor);
 
         if (visitor) {
             visitor = await db.visitor.update({

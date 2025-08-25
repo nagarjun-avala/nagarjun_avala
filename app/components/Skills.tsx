@@ -4,11 +4,11 @@ import { motion } from 'framer-motion';
 import {
   BadgeCheck, Database, Settings, MonitorSmartphone,
 } from "lucide-react";
-import { Tooltip,TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 import {
   SiReact, SiNextdotjs, SiNodedotjs, SiExpress, SiMongodb, SiPostgresql,
-  SiTypescript, SiPrisma, SiTailwindcss, SiGit
+  SiTypescript, SiPrisma, SiTailwindcss, SiGit, SiBootstrap
 } from "react-icons/si";
 
 const skillGroups = [
@@ -17,9 +17,10 @@ const skillGroups = [
     icon: <MonitorSmartphone size={20} className="text-cyan-400" />,
     skills: [
       { name: "React", years: 2, icon: <SiReact />, description: "Component-based UI library" },
-      { name: "Next.js", years: 2, icon: <SiNextdotjs />, description: "React framework for full-stack apps" },
-      { name: "TypeScript", years: 2, icon: <SiTypescript />, description: "Typed superset of JavaScript" },
-      { name: "Tailwind CSS", years: 2, icon: <SiTailwindcss />, description: "Utility-first CSS framework" },
+      { name: "Bootstrap", years: 2, icon: <SiBootstrap />, description: "CSS framework for responsive design" },
+      { name: "Next.js", years: 1, icon: <SiNextdotjs />, description: "React framework for full-stack apps" },
+      { name: "TypeScript", years: 1, icon: <SiTypescript />, description: "Typed superset of JavaScript" },
+      { name: "Tailwind CSS", years: 1, icon: <SiTailwindcss />, description: "Utility-first CSS framework" },
     ],
   },
   {
