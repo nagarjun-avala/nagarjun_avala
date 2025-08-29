@@ -1,7 +1,9 @@
-import { Download, Mail, Linkedin, Github } from 'lucide-react';
+import { Download } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react'
+import { SiGithub, SiLinkedin } from 'react-icons/si';
+import { MdMail } from "react-icons/md";
 
 const GITHUB_USERNAME = "nagarjun-avala"; // Replace with your GitHub username
 const AVATAR_URL = `https://github.com/${GITHUB_USERNAME}.png`;
@@ -24,23 +26,23 @@ const HomeComponent = () => {
       <p className="text-base sm:text-lg text-gray-300 mt-2">
         Web Developer | Aspiring Data Engineer
       </p>
-      <div className="flex justify-center gap-5 mt-6">
+      <div className="flex justify-center gap-5 mt-6 items-center">
         <Link
           href={`https://github.com/${GITHUB_USERNAME}`}
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Github className="hover:text-cyan-400 transition" />
+          <SiGithub className="hover:text-cyan-400 transition" />
         </Link>
         <Link
           href="https://linkedin.com/in/nagarjun-avala"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Linkedin className="hover:text-cyan-400 transition" />
+          <SiLinkedin className="hover:text-cyan-400 transition" />
         </Link>
         <Link href="mailto:nagarjun.avala.official@gmail.com">
-          <Mail className="hover:text-cyan-400 transition" />
+          <MdMail className="hover:text-cyan-400 transition" />
         </Link>
         <Link
           href="/resume.pdf"

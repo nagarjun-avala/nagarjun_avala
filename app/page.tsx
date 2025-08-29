@@ -1,11 +1,7 @@
-// Next.js Page with Glassmorphism, Responsive Design, Link Tags, Theme Toggle, and Email Handler
-
 "use client";
 
 import React, { useState, useEffect } from "react";
 import {
-  Moon,
-  Sun,
   Menu,
   X,
   Folder,
@@ -14,17 +10,29 @@ import {
   MessageSquare,
   Home,
   ArrowUp,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, useAnimation, useScroll, useSpring } from "motion/react";
-import HomeComponent from "./components/Home";
-import SkillsComponent from "./components/Skills";
-import ProjectsComponent from "./components/Projects";
-import BllogsComponent from "./components/Blogs";
-import ContactMeComponent from "./components/ContactMe";
-import ExperianceComponent from "./components/Experiance";
+import DynamicHomeComponent from "./components/DynamicHome";
+import DynamicSkillsComponent from "./components/DynamicSkills";
+import DynamicProjectsComponent from "./components/DynamicProjects";
+import DynamicBlogComponent from "./components/DynamicBlog";
+import DynamicContactMeComponent from "./components/DynamicContactMe";
+import DynamicExperienceComponent from "./components/DynamicExperience";
 import VisitorCounter from "./components/VisitorCounter";
+import { BlogPost, Experience, Profile, Project, Skill } from "@prisma/client";
 
+
+export interface PortfolioData {
+  profile: Profile | null;
+  skills: Record<string, Skill[]>;
+  projects: Project[];
+  experiences: Experience[];
+  blogPosts: BlogPost[];
+  config: Record<string, unknown>;
+}
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -45,22 +53,47 @@ const sections = [
   { id: "contact", label: "Contact", icon: <MessageSquare size={16} /> },
 ];
 
-export default function HomePage() {
-  const [theme, setTheme] = useState("dark");
+export default function DynamicPortfolioPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [showTopBtn, setShowTopBtn] = useState(false);
+  const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
   const scrollControls = useAnimation();
 
+  // Fetch portfolio data
   useEffect(() => {
-    document.documentElement.classList.remove("light", "dark");
-    document.documentElement.classList.add(theme);
-  }, [theme]);
+    const fetchPortfolioData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/portfolio');
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch portfolio data: ${response.status}`);
+        }
+
+        const data: PortfolioData = await response.json();
+        setPortfolioData(data);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching portfolio data:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load portfolio data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPortfolioData();
+  }, []);
 
   useEffect(() => {
-    scrollControls.start({ opacity: 1 });
+    if (!loading) {
+      scrollControls.start({ opacity: 1 });
+    }
 
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -75,7 +108,7 @@ export default function HomePage() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [scrollControls]);
+  }, [scrollControls, loading]);
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
@@ -84,6 +117,38 @@ export default function HomePage() {
       setMenuOpen(false);
     }
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="animate-spin mx-auto mb-4 text-cyan-400" size={48} />
+          <h2 className="text-2xl font-semibold mb-2">Loading Portfolio...</h2>
+          <p className="text-gray-400">Fetching the latest data</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error || !portfolioData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <AlertCircle className="mx-auto mb-4 text-red-400" size={48} />
+          <h2 className="text-2xl font-semibold mb-2 text-red-400">Something went wrong</h2>
+          <p className="text-gray-400 mb-4">{error || 'Failed to load portfolio data'}</p>
+          <Button
+            onClick={() => window.location.reload()}
+            className="bg-cyan-600 hover:bg-cyan-500"
+          >
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white px-4 py-10 sm:px-6 md:px-10 font-sans transition-all duration-300">
@@ -104,15 +169,14 @@ export default function HomePage() {
       {showTopBtn && (
         <button
           onClick={() => scrollToSection("home")}
-          className="fixed bottom-6 right-6 z-50 bg-cyan-500 text-white p-3 rounded-full shadow-lg hover:bg-cyan-600"
+          className="fixed bottom-6 right-6 z-50 bg-cyan-500 text-white p-3 rounded-full shadow-lg hover:bg-cyan-600 transition-colors"
         >
           <ArrowUp size={20} />
         </button>
       )}
 
       <div className="md:ml-20">
-        {/* Sections */}
-
+        {/* Dynamic Sections */}
         {sections.map(({ id }) => (
           <motion.section
             key={id}
@@ -123,35 +187,42 @@ export default function HomePage() {
             viewport={{ once: true, amount: 0.3 }}
             variants={fadeUp}
           >
-            {id !== "home" && (
+            {id !== "home" && portfolioData && (
               <>
                 <h2 className="text-3xl font-bold mb-2 capitalize">{id}</h2>
-                <p className="text-muted-foreground mb-10">
-                  This is the {id} section content.
-                </p>
+                <div className="h-1 w-20 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full mb-10" />
               </>
             )}
 
-
-
-            {id === "home" && (
+            {id === "home" && portfolioData?.profile && (
               <div className="text-center">
-                <HomeComponent />
+                <DynamicHomeComponent profile={portfolioData.profile} />
               </div>
             )}
 
-            {id === "skills" && <SkillsComponent />}
+            {id === "skills" && portfolioData?.skills && (
+              <DynamicSkillsComponent skills={portfolioData.skills} />
+            )}
 
-            {id === "projects" && <ProjectsComponent />}
+            {id === "projects" && portfolioData?.projects && (
+              <DynamicProjectsComponent projects={portfolioData.projects} />
+            )}
 
-            {id === "blog" && <BllogsComponent />}
+            {id === "blog" && portfolioData?.blogPosts && (
+              <DynamicBlogComponent blogPosts={portfolioData.blogPosts} />
+            )}
 
-            {id === "contact" && <ContactMeComponent />}
+            {id === "contact" && portfolioData?.profile && (
+              <DynamicContactMeComponent profile={portfolioData.profile} />
+            )}
 
-            {id === "experience" && <ExperianceComponent />}
+            {id === "experience" && portfolioData?.experiences && (
+              <DynamicExperienceComponent experiences={portfolioData.experiences} />
+            )}
           </motion.section>
         ))}
-        {/* Floating section nav for desktop with active highlight and neon glow */}
+
+        {/* Floating section nav for desktop */}
         <div className="fixed top-1/2 left-4 z-40 hidden md:flex flex-col gap-4">
           {sections.map(({ id, label, icon }) => (
             <motion.button
@@ -162,21 +233,21 @@ export default function HomePage() {
                 : "bg-white/10 hover:bg-cyan-600 hover:shadow-[0_0_6px_rgba(34,211,238,0.5)]"
                 }`}
               whileHover={{ scale: 1.05 }}
+              title={label}
             >
-              <span className="sr-only">{label}</span>
               {icon}
             </motion.button>
           ))}
         </div>
 
-        {/* Scrollable section nav for mobile */}
+        {/* Mobile bottom navigation */}
         <div className="fixed bottom-2 left-0 right-0 z-50 flex justify-center md:hidden overflow-x-auto px-4">
           <div className="flex gap-4 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-xl">
             {sections.map(({ id, icon, label }) => (
               <button
                 key={id}
                 onClick={() => scrollToSection(id)}
-                className={`p-2 rounded-full transition ${activeSection === id
+                className={`p-2 rounded-full transition-all duration-300 ${activeSection === id
                   ? "bg-cyan-400 text-black shadow-[0_0_10px_rgba(34,211,238,0.8)]"
                   : "text-white hover:bg-cyan-600 hover:text-black"
                   }`}
@@ -188,19 +259,20 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Mobile hamburger */}
+        {/* Mobile hamburger menu */}
         <div className="fixed top-4 left-4 z-50 md:hidden">
           <Button variant="ghost" onClick={() => setMenuOpen(!menuOpen)}>
             {menuOpen ? <X /> : <Menu />}
           </Button>
         </div>
+
         {menuOpen && (
           <div className="fixed top-0 left-0 w-full h-full bg-black/80 backdrop-blur-sm z-40 flex flex-col items-center justify-center space-y-6">
             {sections.map(({ id, label }) => (
               <button
                 key={id}
                 onClick={() => scrollToSection(id)}
-                className="text-xl text-white hover:text-cyan-400 transition"
+                className="text-xl text-white hover:text-cyan-400 transition-colors"
               >
                 {label}
               </button>
@@ -208,18 +280,8 @@ export default function HomePage() {
           </div>
         )}
 
-        <div className="absolute top-6 right-6">
-          <Button
-            variant="ghost"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="hover:text-cyan-400"
-          >
-            {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-          </Button>
-        </div>
         <VisitorCounter />
       </div>
-
     </main>
   );
 }
