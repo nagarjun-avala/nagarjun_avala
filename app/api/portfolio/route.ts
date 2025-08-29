@@ -73,14 +73,14 @@ export async function GET() {
         // Convert site config to key-value pairs
         const config = siteConfig.reduce((acc, item) => {
             let value = item.value;
-            if (item.type === 'number') value = parseInt(item.value);
-            if (item.type === 'boolean') value = item.value === 'true';
+            if (item.type === 'number') value = parseInt(item.value).toString();
+            if (item.type === 'boolean') value = String(item.value === 'true');
             if (item.type === 'json') {
                 try { value = JSON.parse(item.value); } catch { /* keep as string */ }
             }
             acc[item.key] = value;
             return acc;
-        }, {} as Record<string, any>);
+        }, {} as Record<string, unknown>);
 
         return NextResponse.json({
             profile,

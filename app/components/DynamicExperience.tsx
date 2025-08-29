@@ -1,8 +1,8 @@
 // components/DynamicExperience.tsx
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, MapPin, ExternalLink } from 'lucide-react';
-import { Experience } from '../page';
+import { Calendar, MapPin, } from 'lucide-react';
+import { Experience } from '@prisma/client';
 
 interface DynamicExperienceProps {
   experiences: Experience[];
