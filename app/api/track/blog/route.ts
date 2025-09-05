@@ -1,6 +1,8 @@
+// app/api/track/blog/route.ts - Blog view tracking
+import { db } from "@/lib/db";
+import { getClientInfo } from "@/utils/analytics";
 import { NextResponse } from "next/server";
 
-// app/api/track/blog/route.ts - Blog view tracking
 export async function POST(req: Request) {
     try {
         const { postId, readTime } = await req.json();
