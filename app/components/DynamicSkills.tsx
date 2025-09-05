@@ -5,7 +5,7 @@ import {
   BadgeCheck, Database, Settings, MonitorSmartphone, Code, Palette, Server
 } from "lucide-react";
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { Skill } from '../page';
+import { Skill } from '@prisma/client';
 
 interface DynamicSkillsProps {
   skills: Record<string, Skill[]>;
