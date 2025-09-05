@@ -1,12 +1,15 @@
 // app/api/blog/[slug]/route.ts
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { NextApiRequest } from "next";
 
 export async function GET(
-    request: NextApiRequest,
+    request: Request
 ) {
-    const { slug } = request.query;
+    const url = new URL(request.url);
+    const slug = url.pathname.split("/").pop();
+    if (!slug) {
+        return NextResponse.json({ error: "Missing slug" }, { status: 400 });
+    }
     const slugStr = Array.isArray(slug) ? slug[0] : slug;
     try {
         const post = await db.blogPost.findUnique({
