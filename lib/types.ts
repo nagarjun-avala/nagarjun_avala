@@ -1,4 +1,4 @@
-// Types for portfolio data
+// lib/types.ts
 export interface Profile {
     id: string;
     name: string;
@@ -11,6 +11,9 @@ export interface Profile {
     linkedinUrl?: string;
     resumeUrl?: string;
     avatarUrl?: string;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface Skill {
@@ -21,6 +24,10 @@ export interface Skill {
     proficiency: number;
     description?: string;
     icon?: string;
+    isActive: boolean;
+    order: number;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface Project {
@@ -33,9 +40,14 @@ export interface Project {
     imageUrl?: string;
     demoUrl?: string;
     githubUrl?: string;
-    status: string;
+    status: 'in-progress' | 'completed' | 'archived';
     featured: boolean;
-    startDate: string;
+    isActive: boolean;
+    order: number;
+    startDate?: string;
+    endDate?: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface Experience {
@@ -43,13 +55,17 @@ export interface Experience {
     title: string;
     company: string;
     location?: string;
-    type: string;
+    type: 'full-time' | 'part-time' | 'freelance' | 'contract';
     description: string;
     achievements: string[];
     technologies: string[];
     startDate: string;
     endDate?: string;
     isCurrent: boolean;
+    isActive: boolean;
+    order: number;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface BlogPost {
@@ -57,11 +73,49 @@ export interface BlogPost {
     title: string;
     slug: string;
     excerpt: string;
+    content: string;
     coverImage?: string;
     tags: string[];
-    publishedAt: string;
-    readTime?: number;
+    isPublished: boolean;
+    isFeatured: boolean;
     views: number;
+    readTime?: number;
+    publishedAt?: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface ContactSubmission {
+    id: string;
+    name: string;
+    email: string;
+    message: string;
+    ip?: string;
+    userAgent?: string;
+    status: 'new' | 'read' | 'replied';
+    isSpam: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface SiteConfig {
+    id: string;
+    key: string;
+    value: string;
+    type: 'string' | 'number' | 'boolean' | 'json';
+    description?: string;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface Message {
+    id: string | number;
+    name?: string;
+    email?: string;
+    status?: string;
+    createdAt?: string;
+    message?: string;
 }
 
 export interface PortfolioData {
@@ -71,4 +125,20 @@ export interface PortfolioData {
     experiences: Experience[];
     blogPosts: BlogPost[];
     config: Record<string, unknown>;
+    timestamp: string;
+}
+
+export interface AnalyticsData {
+    overview: {
+        totalVisitors: number;
+        totalMessages: number;
+        totalProjects: number;
+        totalBlogPosts: number;
+    };
+    visitors: {
+        recent: unknown[];
+        topCountries: { country: string; count: number }[];
+    };
+    messages: ContactSubmission[];
+    timestamp: string;
 }

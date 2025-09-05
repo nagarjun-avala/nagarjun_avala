@@ -1,15 +1,17 @@
 // app/api/blog/[slug]/route.ts
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { NextApiRequest } from "next";
 
 export async function GET(
-    request: Request,
-    { params }: { params: { slug: string } }
+    request: NextApiRequest,
 ) {
+    const { slug } = request.query;
+    const slugStr = Array.isArray(slug) ? slug[0] : slug;
     try {
         const post = await db.blogPost.findUnique({
             where: {
-                slug: params.slug,
+                slug: slugStr,
                 isPublished: true
             }
         });

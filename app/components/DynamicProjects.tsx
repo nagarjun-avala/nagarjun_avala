@@ -5,6 +5,7 @@ import { ExternalLink, Github, Calendar, Star } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Project } from '@prisma/client';
+import { useAnalytics } from '@/components/AnalyticsProvider';
 
 interface DynamicProjectsProps {
   projects: Project[];
@@ -12,6 +13,18 @@ interface DynamicProjectsProps {
 
 const DynamicProjectsComponent: React.FC<DynamicProjectsProps> = ({ projects }) => {
   const [filterTech, setFilterTech] = useState("");
+
+  const analytics = useAnalytics();
+
+  const handleProjectClick = (project: Project) => {
+    // Track project view
+    analytics?.trackProjectView(project.id, project.slug);
+    analytics?.trackEvent('project_clicked', {
+      projectName: project.name,
+      projectSlug: project.slug,
+      projectTech: project.technologies
+    });
+  };
 
   const filteredProjects = useMemo(() => {
     if (!filterTech) return projects;
@@ -88,6 +101,7 @@ const DynamicProjectsComponent: React.FC<DynamicProjectsProps> = ({ projects }) 
               boxShadow: "0 20px 40px rgba(6, 182, 212, 0.1)"
             }}
             className="relative bg-white/5 backdrop-blur-md rounded-xl p-6 border border-white/10 hover:border-cyan-500/50 transition-all duration-300 group"
+            onClick={() => handleProjectClick(project)}
           >
             {/* Featured Badge */}
             {project.featured && (
@@ -97,18 +111,18 @@ const DynamicProjectsComponent: React.FC<DynamicProjectsProps> = ({ projects }) 
               </div>
             )}
 
-            {/* Project Image */}
-            {project.imageUrl && (
-              <div className="relative w-full h-40 mb-4 rounded-lg overflow-hidden">
+            <div className="relative w-full h-40 mb-4 rounded-lg overflow-hidden">
+              {/* Project Image */}
+              {project.imageUrl && (
                 <Image
                   src={project.imageUrl}
                   alt={project.name}
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              </div>
-            )}
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+            </div>
 
             {/* Project Info */}
             <div className="space-y-3">

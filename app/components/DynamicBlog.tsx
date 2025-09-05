@@ -5,12 +5,22 @@ import { Calendar, Clock, Eye, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { BlogPost } from '@prisma/client';
+import { useAnalytics } from '@/components/AnalyticsProvider';
 
 interface DynamicBlogProps {
   blogPosts: BlogPost[];
 }
 
 const DynamicBlogComponent: React.FC<DynamicBlogProps> = ({ blogPosts }) => {
+  const analytics = useAnalytics();
+
+  const handleBlogClick = (post: BlogPost) => {
+    analytics?.trackEvent('blog_clicked', {
+      postTitle: post.title,
+      postSlug: post.slug,
+      postTags: post.tags
+    });
+  };
   if (!blogPosts.length) {
     return (
       <div className="text-center py-12">
@@ -58,7 +68,7 @@ const DynamicBlogComponent: React.FC<DynamicBlogProps> = ({ blogPosts }) => {
                   <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
                     <span className="flex items-center gap-1">
                       <Calendar size={14} />
-                      {new Date(featuredPost?.publishedAt).toLocaleDateString()}
+                      {featuredPost.publishedAt ? new Date(featuredPost.publishedAt).toLocaleDateString() : 'Unknown date'}
                     </span>
                     {featuredPost.readTime && (
                       <span className="flex items-center gap-1">
@@ -107,6 +117,7 @@ const DynamicBlogComponent: React.FC<DynamicBlogProps> = ({ blogPosts }) => {
             transition={{ delay: index * 0.1 }}
             whileHover={{ y: -5 }}
             className="bg-white/5 backdrop-blur rounded-xl overflow-hidden border border-white/10 hover:border-cyan-500/50 transition-all duration-300 group"
+            onClick={() => handleBlogClick(post)}
           >
             {post.coverImage && (
               <div className="relative w-full h-48 overflow-hidden">
@@ -146,7 +157,7 @@ const DynamicBlogComponent: React.FC<DynamicBlogProps> = ({ blogPosts }) => {
                 <div className="flex items-center gap-3 text-xs text-gray-400">
                   <span className="flex items-center gap-1">
                     <Calendar size={12} />
-                    {new Date(post.publishedAt).toLocaleDateString()}
+                    {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'Unknown date'}
                   </span>
                   {post.readTime && (
                     <span className="flex items-center gap-1">

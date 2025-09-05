@@ -1,5 +1,7 @@
+// app/api/visitors/route.ts (updated)
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { getClientInfo } from "@/utils/analytics";
 
 type GeoLocation = {
     country: string | null;
@@ -7,44 +9,15 @@ type GeoLocation = {
     city: string | null;
 };
 
-// 🔹 Cache entry with TTL
-type CacheEntry = {
-    location: GeoLocation;
-    expiry: number; // timestamp
-};
+const geoCache = new Map<string, { location: GeoLocation; expiry: number }>();
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
-// 🔹 In-memory cache (IP → CacheEntry)
-const geoCache = new Map<string, CacheEntry>();
-
-// TTL duration (e.g. 24h = 86400000 ms)
-const CACHE_TTL = 24 * 60 * 60 * 1000;
-
-// 🔹 Extract client IP
-function getClientIp(req: Request): string {
-    const forwarded = req.headers.get("x-forwarded-for")?.split(",")[0].trim();
-    let ip = forwarded || req.headers.get("x-real-ip") || "unknown";
-
-    // Normalize IPv6-mapped IPv4 (::ffff:127.0.0.1 → 127.0.0.1)
-    if (ip.startsWith("::ffff:")) {
-        ip = ip.replace("::ffff:", "");
-    }
-
-    return ip;
-}
-
-// 🔹 Lookup geolocation (cached with TTL)
 async function getGeoLocation(ip: string): Promise<GeoLocation> {
-    if (
-        ip === "unknown" ||
-        ip === "127.0.0.1" ||
-        ip.startsWith("192.168")
-    ) {
+    if (ip === "unknown" || ip === "127.0.0.1" || ip.startsWith("192.168")) {
         return { country: "Local", region: null, city: null };
     }
 
     const now = Date.now();
-
-    // Check cache
     const cached = geoCache.get(ip);
     if (cached && cached.expiry > now) {
         return cached.location;
@@ -61,9 +34,7 @@ async function getGeoLocation(ip: string): Promise<GeoLocation> {
             city: data.city ?? null,
         };
 
-        // Cache result with expiry
         geoCache.set(ip, { location, expiry: now + CACHE_TTL });
-
         return location;
     } catch (err) {
         console.error("🌍 Geo lookup failed:", err);
@@ -71,59 +42,64 @@ async function getGeoLocation(ip: string): Promise<GeoLocation> {
     }
 }
 
-// 🔹 POST – Track or update visitor
 export async function POST(req: Request) {
     try {
-        const ip = getClientIp(req);
-        console.log("Visitor IP:", ip);
+        const clientInfo = getClientInfo(req);
+        console.log("Visitor tracking:", clientInfo.ip, clientInfo.device, clientInfo.browser);
 
-        let visitor = await db.visitor.findUnique({ where: { ip } });
+        let visitor = await db.visitor.findUnique({ where: { ip: clientInfo.ip } });
+        const isNewVisitor = !visitor;
 
         if (visitor) {
             visitor = await db.visitor.update({
-                where: { ip },
-                data: { visits: { increment: 1 } },
+                where: { ip: clientInfo.ip },
+                data: {
+                    visits: { increment: 1 },
+                    lastVisit: new Date(),
+                    userAgent: clientInfo.userAgent
+                },
             });
         } else {
-            const location = await getGeoLocation(ip);
+            const location = await getGeoLocation(clientInfo.ip);
             visitor = await db.visitor.create({
-                data: { ip, visits: 1, ...location },
+                data: {
+                    ip: clientInfo.ip,
+                    visits: 1,
+                    userAgent: clientInfo.userAgent,
+                    lastVisit: new Date(),
+                    ...location
+                },
             });
         }
 
-        const totalVisitors = await db.visitor.count();
+        // Get analytics for today
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const [totalVisitors, todayVisitors] = await Promise.all([
+            db.visitor.count(),
+            db.visitor.count({
+                where: { lastVisit: { gte: today } }
+            })
+        ]);
 
         return NextResponse.json({
             totalVisitors,
+            todayVisitors,
             thisVisitor: visitor.visits,
+            isNewVisitor,
             location: {
                 country: visitor.country,
                 region: visitor.region,
                 city: visitor.city,
             },
+            device: clientInfo.device,
+            browser: clientInfo.browser
         });
     } catch (error) {
         console.error("❌ Visitor API error:", error);
         return NextResponse.json(
             { error: "Failed to update visitor" },
-            { status: 500 }
-        );
-    }
-}
-
-// 🔹 GET – Fetch analytics
-export async function GET() {
-    try {
-        const visitors = await db.visitor.findMany();
-
-        return NextResponse.json({
-            totalVisitors: visitors.length,
-            visitors,
-        });
-    } catch (error) {
-        console.error("❌ Analytics fetch failed:", error);
-        return NextResponse.json(
-            { error: "Failed to fetch analytics" },
             { status: 500 }
         );
     }
