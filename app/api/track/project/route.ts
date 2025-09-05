@@ -1,7 +1,11 @@
+import { db } from "@/lib/db";
+import { getClientInfo } from "@/utils/analytics";
+import { NextResponse } from "next/server";
+
 // app/api/track/project/route.ts - Project view tracking
 export async function POST(req: Request) {
     try {
-        const { projectId, projectSlug } = await req.json();
+        const { projectId } = await req.json();
         const clientInfo = getClientInfo(req);
 
         if (clientInfo.isBot) {
@@ -21,14 +25,6 @@ export async function POST(req: Request) {
                 ip: clientInfo.ip,
                 userAgent: clientInfo.userAgent,
                 referrer: clientInfo.referrer
-            }
-        });
-
-        // Update project view count
-        await db.project.update({
-            where: { id: projectId },
-            data: {
-                views: { increment: 1 }
             }
         });
 

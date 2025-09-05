@@ -1,7 +1,7 @@
 // components/admin/dialogs/AddBlogPostDialog.tsx
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     X,
@@ -9,7 +9,7 @@ import {
     Save,
     Eye,
     Star,
-    Image,
+    Image as ImageIcon,
     Tag,
     Calendar,
     Clock,
@@ -28,31 +28,58 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
+import { BlogPost } from '@prisma/client';
+import Image from 'next/image';
 
-const BlogPostSchema = z.object({
-    title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),
+export const BlogPostSchema = z.object({
+    title: z
+        .string()
+        .min(1, "Title is required")
+        .max(200, "Title must be less than 200 characters"),
+
     slug: z.string().optional(),
-    excerpt: z.string().min(1, 'Excerpt is required').max(300, 'Excerpt must be less than 300 characters'),
-    content: z.string().min(50, 'Content must be at least 50 characters'),
-    tags: z.array(z.object({
-        name: z.string().min(1, 'Tag cannot be empty')
-    })),
-    coverImage: z.string().url().optional().or(z.literal('')),
-    isPublished: z.boolean().default(false),
-    isFeatured: z.boolean().default(false),
+
+    excerpt: z
+        .string()
+        .min(1, "Excerpt is required")
+        .max(300, "Excerpt must be less than 300 characters"),
+
+    content: z.string().min(50, "Content must be at least 50 characters"),
+
+    tags: z.array(
+        z.object({
+            name: z.string().min(1, "Tag cannot be empty"),
+        })
+    ),
+
+    coverImage: z.string().url().optional().or(z.literal("")),
+
+    // ✅ always boolean, never undefined
+    isPublished: z.boolean(), // required boolean
+    isFeatured: z.boolean(),  // required boolean
+
+
     publishDate: z.string().optional(),
-    metaDescription: z.string().max(160, 'Meta description must be less than 160 characters').optional(),
-    canonicalUrl: z.string().url().optional().or(z.literal('')),
-    category: z.string().optional()
+
+    metaDescription: z
+        .string()
+        .max(160, "Meta description must be less than 160 characters")
+        .optional(),
+
+    canonicalUrl: z.string().url().optional().or(z.literal("")),
+
+    category: z.string().optional(),
 });
 
-type BlogPostFormData = z.infer<typeof BlogPostSchema>;
+// 👇 Use this everywhere instead of manually defining BlogPostFormData
+export type BlogPostFormData = z.infer<typeof BlogPostSchema>;
+
 
 interface AddBlogPostDialogProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess?: (post: BlogPostFormData) => void;
-    editData?: any;
+    editData?: BlogPost | null;
 }
 
 const AddBlogPostDialog: React.FC<AddBlogPostDialogProps> = ({
@@ -67,7 +94,7 @@ const AddBlogPostDialog: React.FC<AddBlogPostDialogProps> = ({
     const [readTime, setReadTime] = useState(0);
     const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved');
     const contentRef = useRef<HTMLTextAreaElement>(null);
-    const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
+    const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const {
         register,
@@ -77,24 +104,26 @@ const AddBlogPostDialog: React.FC<AddBlogPostDialogProps> = ({
         watch,
         setValue,
         control,
-        getValues
+        getValues,
     } = useForm<BlogPostFormData>({
         resolver: zodResolver(BlogPostSchema),
         defaultValues: {
-            title: '',
-            slug: '',
-            excerpt: '',
-            content: '',
+            title: "",
+            slug: "",
+            excerpt: "",
+            content: "",
             tags: [],
-            coverImage: '',
-            isPublished: false,
-            isFeatured: false,
-            publishDate: '',
-            metaDescription: '',
-            canonicalUrl: '',
-            category: ''
-        }
+            coverImage: "",
+            isPublished: false,  // ✅ matches schema
+            isFeatured: false,   // ✅ matches schema
+            publishDate: "",
+            metaDescription: "",
+            canonicalUrl: "",
+            category: "",
+        },
     });
+
+
 
     const { fields: tagFields, append: appendTag, remove: removeTag } = useFieldArray({
         control,
@@ -130,6 +159,21 @@ const AddBlogPostDialog: React.FC<AddBlogPostDialogProps> = ({
         }
     }, [watchedContent]);
 
+    const autoSave = useCallback(async () => {
+        if (!editData) return;
+        const currentData = getValues();
+        try {
+            await fetch(`/api/admin/blog/${editData.id}/autosave`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(currentData),
+            });
+        } catch (error) {
+            console.error("Auto-save failed:", error);
+        }
+    }, [editData, getValues]);
+
+
     // Auto-save functionality
     useEffect(() => {
         if (watchedContent || watchedTitle) {
@@ -147,7 +191,7 @@ const AddBlogPostDialog: React.FC<AddBlogPostDialogProps> = ({
                     try {
                         await autoSave();
                         setAutoSaveStatus('saved');
-                    } catch (error) {
+                    } catch {
                         setAutoSaveStatus('unsaved');
                     }
                 }
@@ -159,33 +203,29 @@ const AddBlogPostDialog: React.FC<AddBlogPostDialogProps> = ({
                 clearTimeout(autoSaveTimeoutRef.current);
             }
         };
-    }, [watchedContent, watchedTitle, editData]);
+    }, [watchedContent, watchedTitle, editData, autoSave]);
 
     // Load edit data
     useEffect(() => {
         if (editData && isOpen) {
             reset({
-                ...editData,
+                title: editData.title,
+                slug: editData.slug ?? '',
+                excerpt: editData.excerpt,
+                content: editData.content,
                 tags: editData.tags?.map((name: string) => ({ name })) || [],
-                publishDate: editData.publishedAt ? new Date(editData.publishedAt).toISOString().split('T')[0] : ''
+                coverImage: editData.coverImage ?? '', // convert null → empty string
+                isPublished: editData.isPublished,
+                isFeatured: editData.isFeatured,
+                publishDate: editData.publishedAt
+                    ? new Date(editData.publishedAt).toISOString().split('T')[0]
+                    : '',
             });
         }
     }, [editData, isOpen, reset]);
 
-    const autoSave = async () => {
-        if (!editData) return;
 
-        const currentData = getValues();
-        try {
-            await fetch(`/api/admin/blog/${editData.id}/autosave`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(currentData)
-            });
-        } catch (error) {
-            console.error('Auto-save failed:', error);
-        }
-    };
+
 
     const handleSubmit_ = async (data: BlogPostFormData) => {
         setLoading(true);
@@ -449,26 +489,9 @@ const AddBlogPostDialog: React.FC<AddBlogPostDialogProps> = ({
                                                     <ToolbarButton onClick={() => insertMarkdown('quote')} icon={<Quote size={14} />} title="Quote" />
                                                 </div>
                                                 <textarea
-                                                    ref={contentRef}
                                                     {...register('content')}
-                                                    placeholder="Start writing your amazing blog post...
-
-You can use Markdown formatting:
-# Headers
-**Bold text**
-*Italic text*
-[Links](https://example.com)
-`Inline code`
-> Quotes
-
-```
-Code blocks
-```
-
-- Lists
-1. Numbered lists
-
-Happy writing! 🚀"
+                                                    ref={contentRef}
+                                                    placeholder="Start writing your amazing blog post..."
                                                     rows={16}
                                                     className="w-full px-4 py-3 bg-gray-700 border border-gray-600 border-t-0 rounded-b-lg text-white placeholder-gray-400 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 font-mono text-sm resize-none"
                                                 />
@@ -569,7 +592,7 @@ Happy writing! 🚀"
                                         {/* Cover Image */}
                                         <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
                                             <h3 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
-                                                <Image className="text-purple-400" size={16} />
+                                                <ImageIcon className="text-purple-400" size={16} />
                                                 Cover Image
                                             </h3>
 
@@ -583,14 +606,17 @@ Happy writing! 🚀"
 
                                                 {watch('coverImage') && (
                                                     <div className="relative">
-                                                        <img
-                                                            src={watch('coverImage')}
+                                                        <Image
+                                                            src={watch('coverImage') || '/api/placeholder/300/150'}
                                                             alt="Cover preview"
                                                             className="w-full h-24 object-cover rounded-lg"
-                                                            onError={(e) => {
+                                                            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
                                                                 e.currentTarget.src = '/api/placeholder/300/150';
                                                             }}
                                                         />
+                                                        <div className="absolute top-2 right-2 bg-black/50 rounded-full p-1 cursor-pointer" onClick={() => setValue('coverImage', '')}>
+                                                            <X size={12} className="text-white" />
+                                                        </div>
                                                     </div>
                                                 )}
 
@@ -777,11 +803,11 @@ const BlogPostPreview: React.FC<{
 
             {data.coverImage && (
                 <div className="mb-8">
-                    <img
+                    <Image
                         src={data.coverImage}
                         alt="Cover"
                         className="w-full h-64 object-cover rounded-xl"
-                        onError={(e) => {
+                        onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
                             e.currentTarget.src = '/api/placeholder/800/400';
                         }}
                     />
@@ -920,9 +946,9 @@ export default AddBlogPostDialog;
 // Additional utility components and hooks
 
 // Auto-save hook
-export const useAutoSave = (data: any, saveFunction: (data: any) => Promise<void>, delay: number = 3000) => {
+export const useAutoSave = (data: unknown, saveFunction: (data: unknown) => Promise<void>, delay: number = 3000) => {
     const [status, setStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved');
-    const timeoutRef = useRef<NodeJS.Timeout>();
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         if (data) {
@@ -1027,17 +1053,6 @@ export const validateSEO = (data: { title: string; excerpt: string; metaDescript
     return issues;
 };
 
-// Image upload utilities (placeholder for future implementation)
-export const uploadImage = async (file: File): Promise<string> => {
-    // This would integrate with your preferred image hosting service
-    // For now, return a placeholder
-    return '/api/placeholder/800/400';
-};
-
-export const optimizeImage = (url: string, width?: number, height?: number): string => {
-    // This would integrate with image optimization services
-    return url;
-};
 
 // Blog post validation utilities
 export const validateBlogPost = (data: BlogPostFormData) => {

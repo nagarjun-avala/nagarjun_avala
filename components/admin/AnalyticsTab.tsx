@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { TrendingUp, MousePointer, Globe, Activity, Download } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 import { Button } from '@/components/ui/button';
-import { DetailedAnalytics } from '@/app/admin/page';
 
 interface ActivityItem {
     location: string;
@@ -16,6 +15,21 @@ interface ActivityItem {
 interface AnalyticsTabProps {
     analytics: DetailedAnalytics | null;
 }
+
+interface VisitorsStats {
+    dailyStats: { date: string; visitors: number; views: number }[];
+    deviceStats: { device: string; count: number; percentage?: number }[];
+    browserStats: { browser: string; count: number }[];
+}
+
+export interface DetailedAnalytics {
+    visitors: VisitorsStats;
+    realtime: {
+        activity: ActivityItem[];
+    };
+}
+
+
 
 export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ analytics }) => {
     const chartColors = ['#06b6d4', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444'];
@@ -37,16 +51,17 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ analytics }) => {
     }
 
     const deviceData: DeviceStat[] =
-        (analytics?.visitors?.deviceStats?.map((item: any) => ({
+        analytics?.visitors?.deviceStats.map((item) => ({
             device: item.device,
             count: item.count,
-            percentage: item.percentage ?? 0
-        })) as DeviceStat[]) ||
-        [
+            percentage: item.percentage ?? 0,
+        })) || [
             { device: 'Desktop', count: 156, percentage: 52 },
             { device: 'Mobile', count: 98, percentage: 33 },
-            { device: 'Tablet', count: 45, percentage: 15 }
+            { device: 'Tablet', count: 45, percentage: 15 },
         ];
+
+
 
     const browserData = analytics?.visitors?.browserStats || [
         { browser: 'Chrome', count: 145 },
