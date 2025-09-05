@@ -53,8 +53,8 @@ export interface DetailedAnalytics {
         }>;
         topCountries: Array<{ country: string; count: number }>;
         dailyStats: Array<{ date: string; visitors: number; views: number }>;
-        deviceStats: Array<{ device: string; count: number }>;
-        browserStats: Array<{ browser: string; count: number }>;
+        deviceStats: Array<{ device: string; count: number; percentage: number }>;
+        browserStats: Array<{ browser: string; count: number; percentage: number }>;
     };
     messages: Array<ContactSubmission>;
     projects: Array<{

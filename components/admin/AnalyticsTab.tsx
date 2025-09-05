@@ -4,30 +4,12 @@ import { motion } from 'framer-motion';
 import { TrendingUp, MousePointer, Globe, Activity, Download } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 import { Button } from '@/components/ui/button';
-
-interface ActivityItem {
-    location: string;
-    device: string;
-    browser: string;
-    time: string;
-}
+import { DetailedAnalytics } from '@/app/admin/page';
 
 interface AnalyticsTabProps {
     analytics: DetailedAnalytics | null;
 }
 
-interface VisitorsStats {
-    dailyStats: { date: string; visitors: number; views: number }[];
-    deviceStats: { device: string; count: number; percentage?: number }[];
-    browserStats: { browser: string; count: number }[];
-}
-
-export interface DetailedAnalytics {
-    visitors: VisitorsStats;
-    realtime: {
-        activity: ActivityItem[];
-    };
-}
 
 
 
@@ -216,27 +198,7 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ analytics }) => {
                 </div>
 
                 <div className="space-y-3 max-h-64 overflow-y-auto">
-                    {analytics?.realtime?.activity?.slice(0, 5).map((activity: ActivityItem, i: number) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: i * 0.05 }}
-                            className="flex items-center gap-3 p-3 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors"
-                        >
-                            <div className="p-2 bg-cyan-500/20 rounded-lg">
-                                <Activity size={14} className="text-cyan-400" />
-                            </div>
-                            <div className="flex-1">
-                                <p className="text-white text-sm font-medium">
-                                    Visitor from {activity.location}
-                                </p>
-                                <p className="text-gray-400 text-xs">
-                                    {activity.device} • {activity.browser} • {new Date(activity.time).toLocaleTimeString()}
-                                </p>
-                            </div>
-                        </motion.div>
-                    )) || [
+                    {[
                         { location: 'India', device: 'Mobile', browser: 'Chrome', time: new Date().toISOString() },
                         { location: 'USA', device: 'Desktop', browser: 'Safari', time: new Date().toISOString() },
                         { location: 'UK', device: 'Tablet', browser: 'Firefox', time: new Date().toISOString() }
