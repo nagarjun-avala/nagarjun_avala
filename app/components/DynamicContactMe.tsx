@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
-import { Profile } from '../page';
+import { Profile } from '@prisma/client';
 
 interface DynamicContactMeProps {
   profile: Profile;
