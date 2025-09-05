@@ -20,35 +20,41 @@ import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
+import { Experience } from '@prisma/client';
 
-const ExperienceSchema = z.object({
+export const ExperienceSchema = z.object({
     title: z.string().min(1, 'Job title is required'),
     company: z.string().min(1, 'Company name is required'),
     location: z.string().optional(),
     type: z.enum(['full-time', 'part-time', 'freelance', 'contract', 'internship']),
     description: z.string().min(10, 'Description must be at least 10 characters'),
-    achievements: z.array(z.object({
-        text: z.string().min(1, 'Achievement cannot be empty')
-    })).min(1, 'At least one achievement is required'),
-    technologies: z.array(z.object({
-        name: z.string().min(1, 'Technology name cannot be empty')
-    })),
+    achievements: z.array(
+        z.object({
+            text: z.string().min(1, 'Achievement cannot be empty')
+        })
+    ).min(1, 'At least one achievement is required'),
+    technologies: z.array(
+        z.object({
+            name: z.string().min(1, 'Technology name cannot be empty')
+        })
+    ),
     startDate: z.string().min(1, 'Start date is required'),
     endDate: z.string().optional(),
-    isCurrent: z.boolean().default(false),
+    isCurrent: z.preprocess((val) => val ?? false, z.boolean()), // ensures boolean
     companyUrl: z.string().url().optional().or(z.literal('')),
     salary: z.string().optional(),
     teamSize: z.number().min(0).optional(),
-    isRemote: z.boolean().default(false)
+    isRemote: z.preprocess((val) => val ?? false, z.boolean()) // ensures boolean
 });
 
-type ExperienceFormData = z.infer<typeof ExperienceSchema>;
+export type ExperienceFormData = z.infer<typeof ExperienceSchema>;
+
 
 interface AddExperienceDialogProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess?: (experience: ExperienceFormData) => void;
-    editData?: any; // For editing existing experience
+    editData?: Experience | null; // For editing existing experience
 }
 
 export const AddExperienceDialog: React.FC<AddExperienceDialogProps> = ({
@@ -68,7 +74,7 @@ export const AddExperienceDialog: React.FC<AddExperienceDialogProps> = ({
         watch,
         setValue,
         control
-    } = useForm<ExperienceFormData>({
+    } = useForm({
         resolver: zodResolver(ExperienceSchema),
         defaultValues: {
             title: '',
@@ -79,7 +85,7 @@ export const AddExperienceDialog: React.FC<AddExperienceDialogProps> = ({
             achievements: [{ text: '' }],
             technologies: [],
             startDate: '',
-            endDate: '',
+            endDate: undefined,
             isCurrent: false,
             companyUrl: '',
             salary: '',
@@ -98,19 +104,32 @@ export const AddExperienceDialog: React.FC<AddExperienceDialogProps> = ({
         name: "technologies"
     });
 
-    const isCurrent = watch('isCurrent');
+    const isCurrent = watch('isCurrent') as boolean;
+
     const watchedData = watch();
 
     // Load edit data
     useEffect(() => {
         if (editData && isOpen) {
-            reset({
-                ...editData,
-                achievements: editData.achievements?.map((text: string) => ({ text })) || [{ text: '' }],
-                technologies: editData.technologies?.map((name: string) => ({ name })) || [],
-                startDate: editData.startDate ? new Date(editData.startDate).toISOString().split('T')[0] : '',
-                endDate: editData.endDate ? new Date(editData.endDate).toISOString().split('T')[0] : ''
-            });
+            const formValues: ExperienceFormData = {
+                title: editData.title,
+                company: editData.company,
+                location: editData.location ?? '', // convert null → ''
+                type: editData.type as 'full-time' |
+                    'part-time' |
+                    'freelance' |
+                    'contract' |
+                    'internship', // cast string → enum
+                description: editData.description,
+                achievements: editData.achievements.map(a => ({ text: a })), // convert string[] → { text: string }[]
+                technologies: editData.technologies.map(t => ({ name: t })), // convert string[] → { name: string }[]
+                startDate: editData.startDate.toISOString().split('T')[0], // Date → string
+                endDate: editData.endDate ? editData.endDate.toISOString().split('T')[0] : undefined,
+                isCurrent: editData.isCurrent,
+                isRemote: false
+            };
+
+            reset(formValues); // ✅ now type matches
         }
     }, [editData, isOpen, reset]);
 
@@ -238,7 +257,11 @@ export const AddExperienceDialog: React.FC<AddExperienceDialogProps> = ({
                         <div className="flex-1 overflow-y-auto p-6">
                             {previewMode ? (
                                 // Preview Mode
-                                <ExperiencePreview data={watchedData} duration={calculateDuration()} />
+                                <ExperiencePreview
+                                    data={watchedData as ExperienceFormData}
+                                    duration={calculateDuration()}
+                                />
+
                             ) : (
                                 // Edit Mode
                                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
