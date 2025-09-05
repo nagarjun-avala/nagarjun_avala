@@ -7,12 +7,13 @@ interface Params {
     };
 }
 
-export async function PUT(req: Request, context: Params) {
-    const { params } = context;
+export async function PUT(req: Request, { params }: Params) {
+    const { id } = params;
+
     try {
         const data = await req.json();
         const project = await db.project.update({
-            where: { id: params.id },
+            where: { id },
             data,
         });
         return NextResponse.json(project);
@@ -24,10 +25,11 @@ export async function PUT(req: Request, context: Params) {
     }
 }
 
-export async function DELETE(req: Request, context: Params) {
-    const { params } = context;
+export async function DELETE(req: Request, { params }: Params) {
+    const { id } = params;
+
     try {
-        await db.project.delete({ where: { id: params.id } });
+        await db.project.delete({ where: { id } });
         return NextResponse.json({ success: true });
     } catch {
         return NextResponse.json(
