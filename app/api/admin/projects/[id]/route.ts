@@ -1,17 +1,17 @@
-import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
 
-interface Params {
-    params: {
-        id: string;
-    };
-}
+export async function PUT(request: Request) {
+    // Extract id from the URL
+    const url = new URL(request.url);
+    const id = url.pathname.split("/").pop();
 
-export async function PUT(req: Request, { params }: Params) {
-    const { id } = params;
+    if (!id) {
+        return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    }
 
     try {
-        const data = await req.json();
+        const data = await request.json();
         const project = await db.project.update({
             where: { id },
             data,
@@ -25,8 +25,13 @@ export async function PUT(req: Request, { params }: Params) {
     }
 }
 
-export async function DELETE(req: Request, { params }: Params) {
-    const { id } = params;
+export async function DELETE(request: Request) {
+    const url = new URL(request.url);
+    const id = url.pathname.split("/").pop();
+
+    if (!id) {
+        return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    }
 
     try {
         await db.project.delete({ where: { id } });
