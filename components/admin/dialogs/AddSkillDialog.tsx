@@ -91,7 +91,7 @@ export const AddSkillDialog: React.FC<AddSkillDialogProps> = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                    className="fixed inset-0 bg-black/30 dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
                     onClick={(e) => e.target === e.currentTarget && handleClose()}
                 >
                     <motion.div
@@ -99,49 +99,55 @@ export const AddSkillDialog: React.FC<AddSkillDialogProps> = ({
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         transition={{ duration: 0.2 }}
-                        className="bg-gray-900/95 backdrop-blur border border-purple-500/30 rounded-2xl p-8 w-full max-w-lg shadow-2xl"
+                        className="bg-white dark:bg-gray-900/95 backdrop-blur border border-purple-500/20 dark:border-purple-500/30 rounded-2xl p-8 w-full max-w-lg shadow-2xl"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Header */}
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-purple-500/20 rounded-lg">
-                                    <Settings className="text-purple-400" size={20} />
-                                </div >
-                                <div>
-                                    <h2 className="text-xl font-bold text-white">Add New Skill</h2>
-                                    <p className="text-gray-400 text-sm">Add a new skill to your portfolio</p>
+                                <div className="p-2 bg-purple-500/10 dark:bg-purple-500/20 rounded-lg">
+                                    <Settings className="text-purple-600 dark:text-purple-400" size={20} />
                                 </div>
-                            </div >
+                                <div>
+                                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Add New Skill</h2>
+                                    <p className="text-gray-600 dark:text-gray-400 text-sm">Add a new skill to your portfolio</p>
+                                </div>
+                            </div>
                             <button
                                 onClick={handleClose}
-                                className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-gray-700/50"
+                                className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50"
                             >
                                 <X size={20} />
                             </button>
-                        </div >
+                        </div>
 
                         {/* Form */}
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                             <div className="grid md:grid-cols-2 gap-4">
+                                {/* Skill Name */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-2">Skill Name *</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Skill Name *
+                                    </label>
                                     <input
                                         type="text"
-                                        {...register('name')}
+                                        {...register("name")}
                                         placeholder="React, Python, etc."
-                                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
+                                        className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
                                     />
                                     {errors.name && (
-                                        <p className="text-red-400 text-sm mt-1">{errors.name.message}</p>
+                                        <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.name.message}</p>
                                     )}
                                 </div>
 
+                                {/* Category */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-2">Category *</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Category *
+                                    </label>
                                     <select
-                                        {...register('category')}
-                                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
+                                        {...register("category")}
+                                        className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
                                     >
                                         <option value="Frontend">Frontend</option>
                                         <option value="Backend">Backend</option>
@@ -152,68 +158,81 @@ export const AddSkillDialog: React.FC<AddSkillDialogProps> = ({
                                         <option value="Mobile">Mobile</option>
                                     </select>
                                     {errors.category && (
-                                        <p className="text-red-400 text-sm mt-1">{errors.category.message}</p>
+                                        <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.category.message}</p>
                                     )}
                                 </div>
                             </div>
 
+                            {/* Years + Proficiency */}
                             <div className="grid md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-2">Years of Experience</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Years of Experience
+                                    </label>
                                     <input
                                         type="number"
-                                        {...register('years', { valueAsNumber: true })}
+                                        {...register("years", { valueAsNumber: true })}
                                         min="0"
                                         max="50"
-                                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
+                                        className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg  text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
                                     />
                                     {errors.years && (
-                                        <p className="text-red-400 text-sm mt-1">{errors.years.message}</p>
+                                        <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.years.message}</p>
                                     )}
                                 </div>
 
+
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                                        Proficiency: <span className="text-purple-400 font-bold">{proficiencyValue}%</span>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Proficiency:{" "}
+                                        <span className="text-purple-600 dark:text-purple-400 font-bold">
+                                            {proficiencyValue}%
+                                        </span>
                                     </label>
                                     <input
                                         type="range"
-                                        {...register('proficiency', { valueAsNumber: true })}
+                                        {...register("proficiency", { valueAsNumber: true })}
                                         min="0"
                                         max="100"
-                                        className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-                                        style={{
-                                            background: `linear-gradient(to right, #8b5cf6 0%, #8b5cf6 ${proficiencyValue}%, #374151 ${proficiencyValue}%, #374151 100%)`
-                                        }}
+                                        className="w-full h-2 rounded-lg appearance-none cursor-pointer slider"
+                                        style={{ background: `linear-gradient(to right, #8b5cf6 0%, #8b5cf6 ${proficiencyValue}%, #374151 ${proficiencyValue}%, #374151 100%)` }}
                                     />
                                     {errors.proficiency && (
-                                        <p className="text-red-400 text-sm mt-1">{errors.proficiency.message}</p>
+                                        <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.proficiency.message}</p>
                                     )}
                                 </div>
                             </div>
 
+                            {/* Description */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Description
+                                </label>
                                 <textarea
-                                    {...register('description')}
+                                    {...register("description")}
                                     placeholder="Brief description of your experience with this skill..."
                                     rows={3}
-                                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 resize-none"
+                                    className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 resize-none"
                                 />
                                 {errors.description && (
-                                    <p className="text-red-400 text-sm mt-1">{errors.description.message}</p>
+                                    <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.description.message}</p>
                                 )}
                             </div>
 
+                            {/* Icon */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">Icon (Emoji or Unicode)</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Icon (Emoji or Unicode)
+                                </label>
                                 <input
                                     type="text"
-                                    {...register('icon')}
+                                    {...register("icon")}
                                     placeholder="⚛️, 🐍, 💾, etc."
-                                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
+                                    className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
                                 />
-                                <p className="text-gray-500 text-xs mt-1">Optional: Add an emoji or icon to represent this skill</p>
+                                <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">
+                                    Optional: Add an emoji or icon to represent this skill
+                                </p>
                             </div>
 
                             {/* Action Buttons */}
@@ -241,13 +260,13 @@ export const AddSkillDialog: React.FC<AddSkillDialogProps> = ({
                                     type="button"
                                     onClick={handleClose}
                                     variant="outline"
-                                    className="border-gray-600 hover:border-gray-500 py-3 rounded-xl"
+                                    className="border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 py-3 rounded-xl"
                                 >
                                     Cancel
                                 </Button>
                             </div>
                         </form>
-                    </motion.div >
+                    </motion.div>
                 </motion.div >
             )}
         </AnimatePresence >

@@ -40,21 +40,27 @@ export interface DetailedAnalytics {
         weeklyVisitors: number;
         monthlyVisitors: number;
         averageSessionTime: number;
+        unreadMessages: number;
+        bounceRate: number;
+        visitorGrowth: string;
+        pageViewGrowth: string;
     };
     visitors: {
         recent: Array<{
             id: string;
             ip: string;
             country: string;
+            region: string;
             city: string;
             visits: number;
             lastVisit: string;
             userAgent: string;
+            createdAt: string;
         }>;
-        topCountries: Array<{ country: string; count: number }>;
-        dailyStats: Array<{ date: string; visitors: number; views: number }>;
+        topCountries: Array<{ country: string; count: number, percentage: number }>;
         deviceStats: Array<{ device: string; count: number; percentage: number }>;
         browserStats: Array<{ browser: string; count: number; percentage: number }>;
+        dailyStats: Array<{ date: string; visitors: number; views: number }>;
     };
     messages: Array<ContactSubmission>;
     projects: Array<{
@@ -197,30 +203,40 @@ export default function AdminDashboard() {
 
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white">
+        <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
             {/* Enhanced Top Navigation */}
             <motion.nav
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-gray-800/50 backdrop-blur border-b border-gray-700 px-6 py-4 sticky top-0 z-40"
+                className="bg-gray-100/50 dark:bg-gray-800/50 backdrop-blur border-b border-gray-200 dark:border-gray-700 px-6 py-4 sticky top-0 z-40"
             >
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <div className="flex items-center gap-4">
+                        {/* Icon container */}
                         <div className="p-2 bg-cyan-500/20 rounded-lg">
-                            <Shield className="text-cyan-400" size={20} />
+                            <Shield className="text-cyan-600 dark:text-cyan-400" size={20} />
                         </div>
+
+                        {/* User info */}
                         <div>
-                            <h1 className="text-lg font-semibold">Welcome, {user?.username}</h1>
-                            <p className="text-gray-400 text-sm">Analytics & Content Management</p>
+                            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                Welcome, {user?.username || "User"}
+                            </h1>
+                            <p className="text-gray-600 dark:text-gray-400 text-sm">
+                                Analytics & Content Management
+                            </p>
                         </div>
 
                         {/* Date Range Selector */}
                         <div className="hidden md:flex items-center gap-2 ml-8">
-                            <Calendar size={16} className="text-gray-400" />
+                            <Calendar
+                                size={16}
+                                className="text-gray-600 dark:text-gray-400"
+                            />
                             <select
                                 value={dateRange}
                                 onChange={(e) => setDateRange(e.target.value)}
-                                className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-1 text-sm focus:border-cyan-500"
+                                className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1 text-sm text-gray-900 dark:text-gray-200 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                             >
                                 <option value="1d">Last 24 hours</option>
                                 <option value="7d">Last 7 days</option>
@@ -232,17 +248,25 @@ export default function AdminDashboard() {
 
                     <div className="flex items-center gap-4">
                         <div className="text-right">
-                            <p className="text-white text-sm font-medium">{user?.username}</p>
-                            <p className="text-gray-400 text-xs capitalize">{user?.role}</p>
+                            <p className="text-gray-900 dark:text-white text-sm font-medium">
+                                {user?.username}
+                            </p>
+                            <p className="text-gray-500 dark:text-gray-400 text-xs capitalize">
+                                {user?.role}
+                            </p>
                         </div>
+
                         <Button
                             onClick={fetchAnalytics}
                             variant="outline"
                             size="sm"
                             disabled={refreshing}
-                            className="border-gray-600"
+                            className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
-                            <RefreshCw size={16} className={`mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+                            <RefreshCw
+                                size={16}
+                                className={`mr-2 ${refreshing ? 'animate-spin' : ''}`}
+                            />
                             Refresh
                         </Button>
 
@@ -250,7 +274,7 @@ export default function AdminDashboard() {
                             onClick={handleLogout}
                             variant="outline"
                             size="sm"
-                            className="border-gray-600"
+                            className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                             <LogOut size={16} className="mr-2" />
                             Logout
@@ -268,7 +292,7 @@ export default function AdminDashboard() {
                     className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
                 >
                     <StatsCard
-                        icon={<Users className="text-cyan-400" />}
+                        icon={<Users className="text-cyan-500 dark:text-cyan-400" />}
                         title="Total Visitors"
                         value={analytics?.overview?.totalVisitors ?? 0}
                         subValue={`${analytics?.overview?.todayVisitors ?? 0} today`}
@@ -276,7 +300,7 @@ export default function AdminDashboard() {
                         changeType="positive"
                     />
                     <StatsCard
-                        icon={<Eye className="text-blue-400" />}
+                        icon={<Eye className="text-blue-500 dark:text-blue-400" />}
                         title="Page Views"
                         value={2847}
                         subValue="This month"
@@ -284,7 +308,7 @@ export default function AdminDashboard() {
                         changeType="positive"
                     />
                     <StatsCard
-                        icon={<MessageSquare className="text-green-400" />}
+                        icon={<MessageSquare className="text-green-500 dark:text-green-400" />}
                         title="Messages"
                         value={analytics?.overview?.totalMessages ?? 0}
                         subValue="3 unread"
@@ -292,7 +316,7 @@ export default function AdminDashboard() {
                         changeType="positive"
                     />
                     <StatsCard
-                        icon={<Activity className="text-purple-400" />}
+                        icon={<Activity className="text-purple-500 dark:text-purple-400" />}
                         title="Engagement"
                         value={73}
                         subValue="Avg. session (sec)"
@@ -342,7 +366,7 @@ export default function AdminDashboard() {
                 </motion.div>
 
                 {/* Enhanced Navigation Tabs */}
-                <div className="flex space-x-1 mb-8 bg-gray-800/50 p-1 rounded-lg overflow-x-auto">
+                <div className="flex space-x-1 mb-8 bg-gray-100 dark:bg-gray-800/50 p-1 rounded-lg overflow-x-auto">
                     {[
                         { id: 'overview', label: 'Overview', icon: <BarChart3 size={16} /> },
                         { id: 'analytics', label: 'Analytics', icon: <TrendingUp size={16} /> },
@@ -356,7 +380,7 @@ export default function AdminDashboard() {
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap ${activeTab === tab.id
                                 ? 'bg-cyan-600 text-white shadow-lg'
-                                : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
                                 }`}
                         >
                             {tab.icon}
@@ -371,21 +395,42 @@ export default function AdminDashboard() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
+                    className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg p-4 border border-gray-200 dark:border-gray-700 shadow-sm"
                 >
                     {activeTab === 'overview' && <OverviewTab analytics={analytics} />}
                     {activeTab === 'analytics' && <AnalyticsTab analytics={analytics} />}
                     {activeTab === 'visitors' && <VisitorsTab analytics={analytics} />}
-                    {activeTab === 'content' && <ContentTab onAddBlog={() => setShowAddBlog(true)} onAddExperience={() => setShowAddExperience(true)} onAddProject={() => setShowAddProject(true)} onAddSkill={() => setShowAddSkill(true)} />}
+                    {activeTab === 'content' && (
+                        <ContentTab
+                            onAddBlog={() => setShowAddBlog(true)}
+                            onAddExperience={() => setShowAddExperience(true)}
+                            onAddProject={() => setShowAddProject(true)}
+                            onAddSkill={() => setShowAddSkill(true)}
+                        />
+                    )}
                     {activeTab === 'messages' && <MessagesTab messages={analytics?.messages || []} />}
                     {activeTab === 'settings' && <SettingsTab />}
                 </motion.div>
             </div>
 
             {/* Dialog Forms */}
-            <AddProjectDialog isOpen={showAddProject} onClose={() => setShowAddProject(false)} />
-            <AddSkillDialog isOpen={showAddSkill} onClose={() => setShowAddSkill(false)} />
-            <AddExperienceDialog isOpen={showAddExperience} onClose={() => setShowAddExperience(false)} />
-            <AddBlogPostDialog isOpen={showAddBlog} onClose={() => setShowAddBlog(false)} />
+            <AddProjectDialog
+                isOpen={showAddProject}
+                onClose={() => setShowAddProject(false)}
+            />
+            <AddSkillDialog
+                isOpen={showAddSkill}
+                onClose={() => setShowAddSkill(false)}
+            />
+            <AddExperienceDialog
+                isOpen={showAddExperience}
+                onClose={() => setShowAddExperience(false)}
+            />
+            <AddBlogPostDialog
+                isOpen={showAddBlog}
+                onClose={() => setShowAddBlog(false)}
+            />
         </div>
+
     );
 };

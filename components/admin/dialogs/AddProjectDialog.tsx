@@ -101,7 +101,7 @@ export const AddProjectDialog: React.FC<AddProjectDialogProps> = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                    className="fixed inset-0 bg-black/30 dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white"
                     onClick={(e) => e.target === e.currentTarget && handleClose()}
                 >
                     <motion.div
@@ -109,23 +109,23 @@ export const AddProjectDialog: React.FC<AddProjectDialogProps> = ({
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         transition={{ duration: 0.2 }}
-                        className="bg-gray-900/95 backdrop-blur border border-cyan-500/30 rounded-2xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl"
+                        className="bg-white dark:bg-gray-900/95 backdrop-blur border border-cyan-500/30 dark:border-cyan-500/30 rounded-2xl p-8 w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Header */}
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-cyan-500/20 rounded-lg">
-                                    <FolderOpen className="text-cyan-400" size={20} />
+                                    <FolderOpen className="text-cyan-500 dark:text-cyan-400" size={20} />
                                 </div>
                                 <div>
-                                    <h2 className="text-xl font-bold text-white">Add New Project</h2>
-                                    <p className="text-gray-400 text-sm">Create a new portfolio project</p>
+                                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Add New Project</h2>
+                                    <p className="text-gray-600 dark:text-gray-400 text-sm">Create a new portfolio project</p>
                                 </div>
                             </div>
                             <button
                                 onClick={handleClose}
-                                className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-gray-700/50"
+                                className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50"
                             >
                                 <X size={20} />
                             </button>
@@ -135,23 +135,25 @@ export const AddProjectDialog: React.FC<AddProjectDialogProps> = ({
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                             <div className="grid md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-2">Project Name *</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Project Name *
+                                    </label>
                                     <input
                                         type="text"
                                         {...register('name')}
                                         placeholder="Awesome Project"
-                                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300"
+                                        className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300"
                                     />
                                     {errors.name && (
-                                        <p className="text-red-400 text-sm mt-1">{errors.name.message}</p>
+                                        <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.name.message}</p>
                                     )}
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-2">Status</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
                                     <select
                                         {...register('status')}
-                                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300"
+                                        className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300"
                                     >
                                         <option value="completed">Completed</option>
                                         <option value="in-progress">In Progress</option>
@@ -161,71 +163,71 @@ export const AddProjectDialog: React.FC<AddProjectDialogProps> = ({
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">Description *</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description *</label>
                                 <textarea
                                     {...register('description')}
                                     placeholder="Brief description of your project..."
                                     rows={3}
-                                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300 resize-none"
+                                    className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300 resize-none"
                                 />
                                 {errors.description && (
-                                    <p className="text-red-400 text-sm mt-1">{errors.description.message}</p>
+                                    <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.description.message}</p>
                                 )}
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">Detailed Description</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Detailed Description</label>
                                 <textarea
                                     {...register('longDescription')}
                                     placeholder="Detailed description with features, architecture, challenges, etc..."
                                     rows={4}
-                                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300 resize-none"
+                                    className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300 resize-none"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">Technologies *</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Technologies *</label>
                                 <input
                                     type="text"
                                     {...register('technologies')}
                                     placeholder="React, Next.js, TypeScript, MongoDB (comma separated)"
-                                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300"
+                                    className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300"
                                 />
-                                <p className="text-gray-500 text-xs mt-1">Separate technologies with commas</p>
+                                <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">Separate technologies with commas</p>
                                 {errors.technologies && (
-                                    <p className="text-red-400 text-sm mt-1">{errors.technologies.message}</p>
+                                    <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.technologies.message}</p>
                                 )}
                             </div>
 
                             <div className="grid md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-2">Demo URL</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Demo URL</label>
                                     <input
                                         type="url"
                                         {...register('demoUrl')}
                                         placeholder="https://project-demo.com"
-                                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300"
+                                        className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-2">GitHub URL</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">GitHub URL</label>
                                     <input
                                         type="url"
                                         {...register('githubUrl')}
                                         placeholder="https://github.com/username/repo"
-                                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300"
+                                        className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300"
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">Project Image URL</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Project Image URL</label>
                                 <input
                                     type="url"
                                     {...register('imageUrl')}
                                     placeholder="https://example.com/project-image.jpg"
-                                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300"
+                                    className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300"
                                 />
                             </div>
 
@@ -234,10 +236,10 @@ export const AddProjectDialog: React.FC<AddProjectDialogProps> = ({
                                     type="checkbox"
                                     id="featured"
                                     {...register('featured')}
-                                    className="w-4 h-4 text-cyan-600 bg-gray-700 border-gray-600 rounded focus:ring-cyan-500 focus:ring-2"
+                                    className="w-4 h-4 text-cyan-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-cyan-500 focus:ring-2"
                                 />
-                                <label htmlFor="featured" className="text-gray-300 text-sm flex items-center gap-2">
-                                    <Star size={14} className="text-yellow-400" />
+                                <label htmlFor="featured" className="text-gray-700 dark:text-gray-300 text-sm flex items-center gap-2">
+                                    <Star size={14} className="text-yellow-500 dark:text-yellow-400" />
                                     Mark as featured project
                                 </label>
                             </div>
@@ -267,13 +269,14 @@ export const AddProjectDialog: React.FC<AddProjectDialogProps> = ({
                                     type="button"
                                     onClick={handleClose}
                                     variant="outline"
-                                    className="border-gray-600 hover:border-gray-500 py-3 rounded-xl"
+                                    className="border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 py-3 rounded-xl"
                                 >
                                     Cancel
                                 </Button>
                             </div>
                         </form>
                     </motion.div>
+
                 </motion.div>
             )}
         </AnimatePresence>

@@ -56,14 +56,18 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ analytics }) => {
     return (
         <div className="space-y-8">
             {/* Traffic Overview Chart */}
-            <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
+            <div className="bg-white/80 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
                 <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-lg font-semibold flex items-center gap-2">
-                        <TrendingUp className="text-cyan-400" size={20} />
+                    <h3 className="text-lg font-semibold flex items-center gap-2 text-gray-900 dark:text-white">
+                        <TrendingUp className="text-cyan-500 dark:text-cyan-400" size={20} />
                         Traffic Overview
                     </h3>
                     <div className="flex gap-2">
-                        <Button size="sm" variant="outline">
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300"
+                        >
                             <Download size={14} className="mr-2" />
                             Export
                         </Button>
@@ -73,37 +77,47 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ analytics }) => {
                 <div className="h-80">
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={dailyData}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                            <CartesianGrid
+                                strokeDasharray="3 3"
+                                stroke="#e5e7eb"
+                                className="dark:stroke-[#374151]"
+                            />
                             <XAxis
                                 dataKey="date"
-                                stroke="#9ca3af"
+                                stroke="#6b7280"
                                 tick={{ fontSize: 12 }}
-                                tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                tickFormatter={(value) =>
+                                    new Date(value).toLocaleDateString("en-US", {
+                                        month: "short",
+                                        day: "numeric",
+                                    })
+                                }
                             />
-                            <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} />
+                            <YAxis stroke="#6b7280" tick={{ fontSize: 12 }} />
                             <Tooltip
                                 contentStyle={{
-                                    backgroundColor: '#1f2937',
-                                    border: '1px solid #374151',
-                                    borderRadius: '8px'
+                                    backgroundColor: "#ffffff",
+                                    border: "1px solid #e5e7eb",
+                                    borderRadius: "8px",
                                 }}
-                                labelStyle={{ color: '#06b6d4' }}
+                                labelStyle={{ color: "#06b6d4" }}
+                                wrapperClassName="dark:!bg-gray-800 dark:!border-gray-700 dark:!text-white"
                             />
                             <Line
                                 type="monotone"
                                 dataKey="visitors"
                                 stroke="#06b6d4"
                                 strokeWidth={3}
-                                dot={{ fill: '#06b6d4', strokeWidth: 2, r: 4 }}
-                                activeDot={{ r: 6, stroke: '#06b6d4', strokeWidth: 2 }}
+                                dot={{ fill: "#06b6d4", strokeWidth: 2, r: 4 }}
+                                activeDot={{ r: 6, stroke: "#06b6d4", strokeWidth: 2 }}
                             />
                             <Line
                                 type="monotone"
                                 dataKey="views"
                                 stroke="#8b5cf6"
                                 strokeWidth={3}
-                                dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 4 }}
-                                activeDot={{ r: 6, stroke: '#8b5cf6', strokeWidth: 2 }}
+                                dot={{ fill: "#8b5cf6", strokeWidth: 2, r: 4 }}
+                                activeDot={{ r: 6, stroke: "#8b5cf6", strokeWidth: 2 }}
                             />
                         </LineChart>
                     </ResponsiveContainer>
@@ -113,9 +127,9 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ analytics }) => {
             {/* Device & Browser Analytics */}
             <div className="grid lg:grid-cols-2 gap-8">
                 {/* Device Stats */}
-                <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
-                    <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
-                        <MousePointer className="text-purple-400" size={20} />
+                <div className="bg-white/80 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
+                    <h3 className="text-lg font-semibold mb-6 flex items-center gap-2 text-gray-900 dark:text-white">
+                        <MousePointer className="text-purple-500 dark:text-purple-400" size={20} />
                         Device Types
                     </h3>
 
@@ -129,11 +143,16 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ analytics }) => {
                                 className="flex items-center justify-between"
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className={`w-3 h-3 rounded-full`} style={{ backgroundColor: chartColors[index] }} />
-                                    <span className="text-white font-medium">{item.device}</span>
+                                    <div
+                                        className="w-3 h-3 rounded-full"
+                                        style={{ backgroundColor: chartColors[index] }}
+                                    />
+                                    <span className="text-gray-900 dark:text-white font-medium">
+                                        {item.device}
+                                    </span>
                                 </div>
                                 <div className="flex items-center gap-4">
-                                    <div className="w-24 bg-gray-700 rounded-full h-2">
+                                    <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                                         <motion.div
                                             className="h-2 rounded-full"
                                             style={{ backgroundColor: chartColors[index] }}
@@ -142,7 +161,9 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ analytics }) => {
                                             transition={{ duration: 1, delay: index * 0.2 }}
                                         />
                                     </div>
-                                    <span className="text-gray-400 text-sm w-12 text-right">{item.count}</span>
+                                    <span className="text-gray-500 dark:text-gray-400 text-sm w-12 text-right">
+                                        {item.count}
+                                    </span>
                                 </div>
                             </motion.div>
                         ))}
@@ -150,32 +171,40 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ analytics }) => {
                 </div>
 
                 {/* Browser Stats */}
-                <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
-                    <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
-                        <Globe className="text-orange-400" size={20} />
+                <div className="bg-white/80 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
+                    <h3 className="text-lg font-semibold mb-6 flex items-center gap-2 text-gray-900 dark:text-white">
+                        <Globe className="text-orange-500 dark:text-orange-400" size={20} />
                         Browser Distribution
                     </h3>
 
                     <div className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={browserData}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                                <CartesianGrid
+                                    strokeDasharray="3 3"
+                                    stroke="#e5e7eb"
+                                    className="dark:stroke-[#374151]"
+                                />
                                 <XAxis
                                     dataKey="browser"
-                                    stroke="#9ca3af"
+                                    stroke="#6b7280"
                                     tick={{ fontSize: 12 }}
                                 />
-                                <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} />
+                                <YAxis stroke="#6b7280" tick={{ fontSize: 12 }} />
                                 <Tooltip
                                     contentStyle={{
-                                        backgroundColor: '#1f2937',
-                                        border: '1px solid #374151',
-                                        borderRadius: '8px'
+                                        backgroundColor: "#ffffff",
+                                        border: "1px solid #e5e7eb",
+                                        borderRadius: "8px",
                                     }}
+                                    wrapperClassName="dark:!bg-gray-800 dark:!border-gray-700 dark:!text-white"
                                 />
                                 <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                                     {browserData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={chartColors[index % chartColors.length]}
+                                        />
                                     ))}
                                 </Bar>
                             </BarChart>
@@ -185,40 +214,41 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ analytics }) => {
             </div>
 
             {/* Real-time Activity Feed */}
-            <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
+            <div className="bg-white/80 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
                 <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-lg font-semibold flex items-center gap-2">
-                        <Activity className="text-green-400" size={20} />
+                    <h3 className="text-lg font-semibold flex items-center gap-2 text-gray-900 dark:text-white">
+                        <Activity className="text-green-500 dark:text-green-400" size={20} />
                         Real-time Activity
                     </h3>
-                    <div className="flex items-center gap-2 text-green-400">
-                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                    <div className="flex items-center gap-2 text-green-500 dark:text-green-400">
+                        <div className="w-2 h-2 bg-green-500 dark:bg-green-400 rounded-full animate-pulse" />
                         <span className="text-sm">Live</span>
                     </div>
                 </div>
 
                 <div className="space-y-3 max-h-64 overflow-y-auto">
                     {[
-                        { location: 'India', device: 'Mobile', browser: 'Chrome', time: new Date().toISOString() },
-                        { location: 'USA', device: 'Desktop', browser: 'Safari', time: new Date().toISOString() },
-                        { location: 'UK', device: 'Tablet', browser: 'Firefox', time: new Date().toISOString() }
+                        { location: "India", device: "Mobile", browser: "Chrome", time: new Date().toISOString() },
+                        { location: "USA", device: "Desktop", browser: "Safari", time: new Date().toISOString() },
+                        { location: "UK", device: "Tablet", browser: "Firefox", time: new Date().toISOString() },
                     ].map((activity, i) => (
                         <motion.div
                             key={i}
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: i * 0.05 }}
-                            className="flex items-center gap-3 p-3 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors"
+                            className="flex items-center gap-3 p-3 bg-gray-100 dark:bg-gray-700/30 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700/50 transition-colors"
                         >
-                            <div className="p-2 bg-cyan-500/20 rounded-lg">
-                                <Activity size={14} className="text-cyan-400" />
+                            <div className="p-2 bg-cyan-500/10 dark:bg-cyan-500/20 rounded-lg">
+                                <Activity size={14} className="text-cyan-500 dark:text-cyan-400" />
                             </div>
                             <div className="flex-1">
-                                <p className="text-white text-sm font-medium">
+                                <p className="text-gray-900 dark:text-white text-sm font-medium">
                                     Visitor from {activity.location}
                                 </p>
-                                <p className="text-gray-400 text-xs">
-                                    {activity.device} • {activity.browser} • {new Date(activity.time).toLocaleTimeString()}
+                                <p className="text-gray-500 dark:text-gray-400 text-xs">
+                                    {activity.device} • {activity.browser} •{" "}
+                                    {new Date(activity.time).toLocaleTimeString()}
                                 </p>
                             </div>
                         </motion.div>
@@ -226,5 +256,6 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ analytics }) => {
                 </div>
             </div>
         </div>
+
     );
 };
