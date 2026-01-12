@@ -5,7 +5,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import {  Home, Search } from "lucide-react";
+import { Home, Search } from "lucide-react";
 import { useEffect } from "react";
 
 export default function NotFoundPage() {

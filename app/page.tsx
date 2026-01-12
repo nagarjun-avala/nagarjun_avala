@@ -1,287 +1,196 @@
-"use client";
+"use client"
 
-import React, { useState, useEffect } from "react";
-import {
-  Menu,
-  X,
-  Folder,
-  FileText,
-  Book,
-  MessageSquare,
-  Home,
-  ArrowUp,
-  Loader2,
-  AlertCircle,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { motion, useAnimation, useScroll, useSpring } from "motion/react";
-import DynamicHomeComponent from "./components/DynamicHome";
-import DynamicSkillsComponent from "./components/DynamicSkills";
-import DynamicProjectsComponent from "./components/DynamicProjects";
-import DynamicBlogComponent from "./components/DynamicBlog";
-import DynamicContactMeComponent from "./components/DynamicContactMe";
-import DynamicExperienceComponent from "./components/DynamicExperience";
-import VisitorCounter from "./components/VisitorCounter";
-import { BlogPost, Experience, Profile, Project, Skill } from "@prisma/client";
+import { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
+import { ContactAndFooter } from '@/components/ContactAndFooter';
+import { useTheme } from 'next-themes';
+import { HeroSection } from './components/Hero';
+import AboutSection from './components/About';
+import ProjectsSection from './components/Projects';
+import ExperienceSection from './components/Experience';
+import BlogsSection from './components/Blogs';
+import Cursor from './components/Cursor';
+import Navbar from '@/components/Navbar';
 
+const MOCK_DATA = {
+  name: "Nagarjun Avala",
+  meta: {
+    title: "Creative Developer Portfolio",
+    email: "nagarjun.avala.official@gmail.com"
+  },
+  hero: {
+    badge: "Open to Work & Collaborations",
+    roles: ["Web Developer"],
+    titlePrefix: "I am a",
+    titleSuffix: "& Aspiring DevOps Engineer",
+    description: "Bridging the gap between code and infrastructure with precision and chaos-engineering.",
+    ctaPrimary: "Explore My Work",
+    ctaSecondary: "Contact Me"
+  },
+  about: {
+    title: "",
+    description: "I specialize in building performant, accessible, and beautiful web applications. Currently obsessed with React, Framer Motion, and micro-interactions.",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
+    experience: {
+      years: "5+",
+      label: "Years of Experience"
+    },
+    skills: ["JavaScript", "React", "Next.js", "TypeScript", "Node.js", "Tailwind", "Framer Motion", "Three.js", "PostgreSQL", "AWS"]
+  },
+  projects: [
+    {
+      "id": 1,
+      "cat": "E-Commerce",
+      "title": "Neon Market",
+      "desc": "Next-gen shopping experience with 3D product previews.",
+      "img": "https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&w=800&q=80",
+      "tags": ["React", "Three.js", "Shopify"]
+    },
+    {
+      "id": 2,
+      "cat": "SaaS Platform",
+      "title": "Flow Dashboard",
+      "desc": "Real-time analytics platform for enterprise teams.",
+      "img": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
+      "tags": ["Next.js", "D3.js", "Supabase"]
+    },
+    {
+      "id": 3,
+      "cat": "3D Experience",
+      "title": "Orbit Visuals",
+      "desc": "Interactive audio-reactive visualizer in the browser.",
+      "img": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
+      "tags": ["WebGL", "GLSL", "React"]
+    },
+    {
+      "id": 4,
+      "cat": "AI Integration",
+      "title": "Brainwave",
+      "desc": "Generative AI interface for creative writing.",
+      "img": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=800&q=80",
+      "tags": ["OpenAI", "Node.js", "Tailwind"]
+    }
+  ],
+  "experience": [
+    {
+      "id": "3",
+      "start": new Date("2023-02-01"),
+      "end": new Date("2023-05-01"),
+      "role": "Entrepreneur",
+      "company": "J Hub",
+      "desc": "Award-winning WebGL sites for top clients."
+    },
+    {
+      "id": "1",
+      "start": new Date("2022-01-01"),
+      "end": new Date("2024-01-01"),
+      "role": "Web Developer",
+      "company": "Learnyte",
+      "desc": "Leading design system & Next.js migration."
+    },
+    {
+      "id": "2",
+      "start": new Date("2023-10-01"),
+      "end": new Date("2023-12-01"),
+      "role": "Entrepreneur",
+      "company": "Amazon Web Services(AWS)",
+      "desc": "Scaled MVP to 10k users with AWS & Node.js."
+    },
 
-export interface PortfolioData {
-  profile: Profile | null;
-  skills: Record<string, Skill[]>;
-  projects: Project[];
-  experiences: Experience[];
-  blogPosts: BlogPost[];
-  config: Record<string, unknown>;
-}
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i = 1) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.1, duration: 0.5 },
-    ease: "easeOut",
-  }),
+  ],
+  "blogs": [
+    { "id": 1, "title": "The Future of React Server Components", "date": "Oct 12, 2023", "readTime": "5 min read", "category": "Tech" },
+    { "id": 2, "title": "Mastering Framer Motion layout animations", "date": "Sep 28, 2023", "readTime": "8 min read", "category": "Design" },
+    { "id": 3, "title": "Why I switched from VS Code to Neovim", "date": "Aug 15, 2023", "readTime": "6 min read", "category": "Productivity" }
+  ]
 };
 
-const sections = [
-  { id: "home", label: "Home", icon: <Home size={16} /> },
-  { id: "skills", label: "Skills", icon: <Folder size={16} /> },
-  { id: "projects", label: "Projects", icon: <FileText size={16} /> },
-  { id: "experience", label: "Experience", icon: <Book size={16} /> },
-  { id: "blog", label: "Blog", icon: <Book size={16} /> },
-  { id: "contact", label: "Contact", icon: <MessageSquare size={16} /> },
-];
+export default function App() {
+  const [data, setData] = useState(null);
+  const [isDark, setIsDark] = useState(false); // Default dark mode
+  const { setTheme } = useTheme()
 
-export default function DynamicPortfolioPage() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("home");
-  const [showTopBtn, setShowTopBtn] = useState(false);
-  const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
-  const scrollControls = useAnimation();
-
-  // Fetch portfolio data
+  // Data Fetching Simulation
   useEffect(() => {
-    const fetchPortfolioData = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/portfolio');
+    const fetchData = async () => {
+      // Simulate network request
+      await new Promise(resolve => setTimeout(resolve, 800));
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch portfolio data: ${response.status}`);
+      // Calculate years of experience dynamically based on the earliest date found
+      let totalYears = "5+"; // fallback
+      if (MOCK_DATA.experience && MOCK_DATA.experience.length > 0) {
+        const startYears = MOCK_DATA.experience.map(exp => exp.start.getFullYear());
+        const minYear = Math.min(...startYears);
+        const currentYear = new Date().getFullYear();
+        totalYears = `${currentYear - minYear}+`;
+      }
+
+      // Create first name for dynamic title
+      const firstName = MOCK_DATA.name.split(' ')[0];
+
+      const enrichedData = {
+        ...MOCK_DATA,
+        meta: {
+          ...MOCK_DATA.meta,
+          title: `${MOCK_DATA.name} | Creative Developer` // Dynamic Meta Title
+        },
+        about: {
+          ...MOCK_DATA.about,
+          title: `Hi, I'm ${firstName}.`, // Dynamic About Title
+          experience: {
+            ...MOCK_DATA.about.experience,
+            years: totalYears
+          }
         }
+      };
 
-        const data: PortfolioData = await response.json();
-        setPortfolioData(data);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching portfolio data:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load portfolio data');
-      } finally {
-        setLoading(false);
+      setData(enrichedData);
+
+      // Update document title dynamically
+      if (typeof document !== 'undefined') {
+        document.title = enrichedData.meta.title;
       }
     };
-
-    fetchPortfolioData();
+    fetchData();
   }, []);
 
-  useEffect(() => {
-    if (!loading) {
-      scrollControls.start({ opacity: 1 });
-    }
-
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      let current = "home";
-      sections.forEach(({ id }) => {
-        const el = document.getElementById(id);
-        if (el && scrollY >= el.offsetTop - 150) current = id;
-      });
-      setActiveSection(current);
-      setShowTopBtn(scrollY > 400);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [scrollControls, loading]);
-
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-      setMenuOpen(false);
-    }
+  // Theme Toggle
+  const toggleTheme = () => {
+    setIsDark(!isDark);
+    setTheme(isDark ? "dark" : "light")
   };
 
-  // Loading state
-  if (loading) {
+  if (!data) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="animate-spin mx-auto mb-4 text-cyan-400" size={48} />
-          <h2 className="text-2xl font-semibold mb-2">Loading Portfolio...</h2>
-          <p className="text-gray-400">Fetching the latest data</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white">
+        <Loader2 className="w-8 h-8 animate-spin text-rose-500" />
       </div>
     );
   }
 
-  // Error state
-  if (error || !portfolioData) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white flex items-center justify-center">
-        <div className="text-center max-w-md">
-          <AlertCircle className="mx-auto mb-4 text-red-400" size={48} />
-          <h2 className="text-2xl font-semibold mb-2 text-red-400">Something went wrong</h2>
-          <p className="text-gray-400 mb-4">{error || 'Failed to load portfolio data'}</p>
-          <Button
-            onClick={() => window.location.reload()}
-            className="bg-cyan-600 hover:bg-cyan-500"
-          >
-            Try Again
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  // Calculate sections for Navbar based on available data
+  const sections = {
+    hero: !!data.hero,
+    about: !!data.about,
+    projects: data.projects && data.projects.length > 0,
+    experience: data.experience && data.experience.length > 0,
+    blogs: data.blogs && data.blogs.length > 0,
+  };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white px-4 py-10 sm:px-6 md:px-10 font-sans transition-all duration-300">
-      {/* Scroll Progress Bar */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-2 z-50 bg-gradient-to-r from-purple-500 via-cyan-400 to-pink-500 animate-pulse rounded-full opacity-0 origin-left shadow-[0_0_8px_rgba(0,255,255,0.5),0_0_16px_rgba(255,0,255,0.4),0_0_24px_rgba(255,255,0,0.2)]"
-        style={{
-          scaleX,
-          boxShadow: `0 0 ${20 + scaleX.get() * 30}px rgba(0,255,255,0.6),
-                    0 0 ${30 + scaleX.get() * 40}px rgba(255,0,255,0.5),
-                    0 0 ${40 + scaleX.get() * 50}px rgba(255,255,0,0.3)`
-        }}
-        animate={scrollControls}
-        initial={{ opacity: 0 }}
-      />
+    <div className={`min-h-screen selection:bg-rose-500/30 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300`}>
+      <Cursor />
+      <Navbar toggleTheme={toggleTheme} isDark={isDark} sections={sections} />
 
-      {/* Back to Top Button */}
-      {showTopBtn && (
-        <button
-          onClick={() => scrollToSection("home")}
-          className="fixed bottom-6 right-6 z-50 bg-cyan-500 text-white p-3 rounded-full shadow-lg hover:bg-cyan-600 transition-colors"
-        >
-          <ArrowUp size={20} />
-        </button>
-      )}
+      <main>
+        {sections.hero && <HeroSection data={data.hero} />}
+        {sections.about && <AboutSection data={data.about} />}
+        {sections.projects && <ProjectsSection projects={data.projects} />}
+        {sections.experience && <ExperienceSection experience={data.experience} />}
+        {sections.blogs && <BlogsSection blogs={data.blogs} />}
+      </main>
 
-      <div className="md:ml-20">
-        {/* Dynamic Sections */}
-        {sections.map(({ id }) => (
-          <motion.section
-            key={id}
-            id={id}
-            className="mb-16"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={fadeUp}
-          >
-            {id !== "home" && portfolioData && (
-              <>
-                <h2 className="text-3xl font-bold mb-2 capitalize">{id}</h2>
-                <div className="h-1 w-20 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full mb-10" />
-              </>
-            )}
-
-            {id === "home" && portfolioData?.profile && (
-              <div className="text-center">
-                <DynamicHomeComponent profile={portfolioData.profile} />
-              </div>
-            )}
-
-            {id === "skills" && portfolioData?.skills && (
-              <DynamicSkillsComponent skills={portfolioData.skills} />
-            )}
-
-            {id === "projects" && portfolioData?.projects && (
-              <DynamicProjectsComponent projects={portfolioData.projects} />
-            )}
-
-            {id === "blog" && portfolioData?.blogPosts && (
-              <DynamicBlogComponent blogPosts={portfolioData.blogPosts} />
-            )}
-
-            {id === "contact" && portfolioData?.profile && (
-              <DynamicContactMeComponent profile={portfolioData.profile} />
-            )}
-
-            {id === "experience" && portfolioData?.experiences && (
-              <DynamicExperienceComponent experiences={portfolioData.experiences} />
-            )}
-          </motion.section>
-        ))}
-
-        {/* Floating section nav for desktop */}
-        <div className="fixed top-1/2 left-4 z-40 hidden md:flex flex-col gap-4">
-          {sections.map(({ id, label, icon }) => (
-            <motion.button
-              key={id}
-              onClick={() => scrollToSection(id)}
-              className={`text-sm px-3 py-1 rounded backdrop-blur flex items-center gap-2 transition-all duration-300 font-medium ${activeSection === id
-                ? "bg-cyan-400 text-black shadow-[0_0_10px_2px_rgba(34,211,238,0.8)]"
-                : "bg-white/10 hover:bg-cyan-600 hover:shadow-[0_0_6px_rgba(34,211,238,0.5)]"
-                }`}
-              whileHover={{ scale: 1.05 }}
-              title={label}
-            >
-              {icon}
-            </motion.button>
-          ))}
-        </div>
-
-        {/* Mobile bottom navigation */}
-        <div className="fixed bottom-2 left-0 right-0 z-50 flex justify-center md:hidden overflow-x-auto px-4">
-          <div className="flex gap-4 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-xl">
-            {sections.map(({ id, icon, label }) => (
-              <button
-                key={id}
-                onClick={() => scrollToSection(id)}
-                className={`p-2 rounded-full transition-all duration-300 ${activeSection === id
-                  ? "bg-cyan-400 text-black shadow-[0_0_10px_rgba(34,211,238,0.8)]"
-                  : "text-white hover:bg-cyan-600 hover:text-black"
-                  }`}
-                title={label}
-              >
-                {icon}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Mobile hamburger menu */}
-        <div className="fixed top-4 left-4 z-50 md:hidden">
-          <Button variant="ghost" onClick={() => setMenuOpen(!menuOpen)}>
-            {menuOpen ? <X /> : <Menu />}
-          </Button>
-        </div>
-
-        {menuOpen && (
-          <div className="fixed top-0 left-0 w-full h-full bg-black/80 backdrop-blur-sm z-40 flex flex-col items-center justify-center space-y-6">
-            {sections.map(({ id, label }) => (
-              <button
-                key={id}
-                onClick={() => scrollToSection(id)}
-                className="text-xl text-white hover:text-cyan-400 transition-colors"
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        )}
-
-        <VisitorCounter />
-      </div>
-    </main>
+      <ContactAndFooter email={data?.meta?.email} name={data.name} />
+    </div>
   );
 }

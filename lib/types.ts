@@ -1,144 +1,65 @@
 // lib/types.ts
-export interface Profile {
-    id: string;
-    name: string;
+
+export interface Meta {
     title: string;
-    bio?: string;
     email: string;
-    phone?: string;
-    location?: string;
-    githubUrl?: string;
-    linkedinUrl?: string;
-    resumeUrl?: string;
-    avatarUrl?: string;
-    isActive: boolean;
-    createdAt: string;
-    updatedAt: string;
 }
 
-export interface Skill {
-    id: string;
-    name: string;
-    category: string;
-    years: number;
-    proficiency: number;
-    description?: string;
-    icon?: string;
-    isActive: boolean;
-    order: number;
-    createdAt: string;
-    updatedAt: string;
+export interface Hero {
+    badge: string;
+    roles: string[];
+    titlePrefix: string;
+    titleSuffix: string;
+    description: string;
+    ctaPrimary: string;
+    ctaSecondary: string;
+}
+
+export interface AboutExperience {
+    years: string;
+    label: string;
+}
+
+export interface About {
+    title: string;
+    description: string;
+    image: string;
+    experience: AboutExperience;
+    skills: string[];
 }
 
 export interface Project {
     id: string;
-    name: string;
-    slug: string;
-    description: string;
-    longDescription?: string;
-    technologies: string[];
-    imageUrl?: string;
-    demoUrl?: string;
-    githubUrl?: string;
-    status: 'in-progress' | 'completed' | 'archived';
-    featured: boolean;
-    isActive: boolean;
-    order: number;
-    startDate?: string;
-    endDate?: string;
-    createdAt: string;
-    updatedAt: string;
-}
-
-export interface Experience {
-    id: string;
+    cat: string;
     title: string;
-    company: string;
-    location?: string;
-    type: 'full-time' | 'part-time' | 'freelance' | 'contract';
-    description: string;
-    achievements: string[];
-    technologies: string[];
-    startDate: string;
-    endDate?: string;
-    isCurrent: boolean;
-    isActive: boolean;
-    order: number;
-    createdAt: string;
-    updatedAt: string;
-}
-
-export interface BlogPost {
-    id: string;
-    title: string;
-    slug: string;
-    excerpt: string;
-    content: string;
-    coverImage?: string;
+    desc: string;
+    img: string;
     tags: string[];
-    isPublished: boolean;
-    isFeatured: boolean;
-    views: number;
-    readTime?: number;
-    publishedAt?: string;
-    createdAt: string;
-    updatedAt: string;
 }
 
-export interface ContactSubmission {
+export interface ExperienceItem {
     id: string;
-    name: string;
-    email: string;
-    message: string;
-    ip?: string;
-    userAgent?: string;
-    status: 'new' | 'read' | 'replied';
-    isSpam: boolean;
-    createdAt: string;
-    updatedAt: string;
+    start: Date;
+    end: Date | "present"; // Can be a Date object or the string literal "present"
+    role: string;
+    company: string;
+    desc: string;
 }
 
-export interface SiteConfig {
-    id: string;
-    key: string;
-    value: string;
-    type: 'string' | 'number' | 'boolean' | 'json';
-    description?: string;
-    isActive: boolean;
-    createdAt: string;
-    updatedAt: string;
-}
-
-export interface Message {
-    id: string | number;
-    name?: string;
-    email?: string;
-    status?: string;
-    createdAt?: string;
-    message?: string;
+export interface Blog {
+    id: number;
+    title: string;
+    date: string;
+    readTime: string;
+    category: string;
 }
 
 export interface PortfolioData {
-    profile: Profile | null;
-    skills: Record<string, Skill[]>;
+    name: string;
+    meta: Meta;
+    hero: Hero;
+    about: About;
     projects: Project[];
-    experiences: Experience[];
-    blogPosts: BlogPost[];
-    config: Record<string, unknown>;
-    timestamp: string;
-}
-
-export interface AnalyticsData {
-    overview: {
-        totalVisitors: number;
-        totalMessages: number;
-        totalProjects: number;
-        totalBlogPosts: number;
-    };
-    visitors: {
-        recent: unknown[];
-        topCountries: { country: string; count: number }[];
-    };
-    messages: ContactSubmission[];
-    timestamp: string;
+    experience: Experience[];
+    blogs: Blog[];
 }
