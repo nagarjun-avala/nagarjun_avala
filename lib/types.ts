@@ -1,5 +1,3 @@
-// lib/types.ts
-
 export interface Meta {
     title: string;
     email: string;
@@ -29,7 +27,7 @@ export interface About {
 }
 
 export interface Project {
-    id: string;
+    id: number;
     cat: string;
     title: string;
     desc: string;
@@ -37,7 +35,7 @@ export interface Project {
     tags: string[];
 }
 
-export interface ExperienceItem {
+export interface Experience {
     id: string;
     start: Date;
     end: Date | "present"; // Can be a Date object or the string literal "present"

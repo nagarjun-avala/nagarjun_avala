@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { useMotionValue, useSpring } from 'motion/react';
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 
 type Props = {}
 
@@ -13,7 +13,7 @@ const Cursor = (props: Props) => {
     const cursorY = useSpring(mouseY, springConfig);
 
     useEffect(() => {
-        const moveCursor = (e) => {
+        const moveCursor = (e: MouseEvent) => {
             mouseX.set(e.clientX - 16);
             mouseY.set(e.clientY - 16);
         };

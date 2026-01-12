@@ -4,15 +4,26 @@ import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { ContactAndFooter } from '@/components/ContactAndFooter';
 import { useTheme } from 'next-themes';
-import { HeroSection } from './components/Hero';
-import AboutSection from './components/About';
-import ProjectsSection from './components/Projects';
-import ExperienceSection from './components/Experience';
-import BlogsSection from './components/Blogs';
-import Cursor from './components/Cursor';
+import { HeroSection } from '@/components/Hero';
+import AboutSection from '@/components/About';
+import ProjectsSection from '@/components/Projects';
+import ExperienceSection from '@/components/Experience';
+import BlogsSection from '@/components/Blogs';
+import Cursor from '@/components/Cursor';
 import Navbar from '@/components/Navbar';
+import { About, Blog, Experience, Hero, Meta, Project } from '@/lib/types';
 
-const MOCK_DATA = {
+interface PortfolioDataTypes {
+  name: string
+  meta: Meta
+  hero: Hero
+  about: About
+  projects: Project[]
+  experience: Experience[]
+  blogs: Blog[]
+}
+
+const MOCK_DATA: PortfolioDataTypes = {
   name: "Nagarjun Avala",
   meta: {
     title: "Creative Developer Portfolio",
@@ -71,7 +82,7 @@ const MOCK_DATA = {
       "tags": ["OpenAI", "Node.js", "Tailwind"]
     }
   ],
-  "experience": [
+  experience: [
     {
       "id": "3",
       "start": new Date("2023-02-01"),
@@ -98,7 +109,7 @@ const MOCK_DATA = {
     },
 
   ],
-  "blogs": [
+  blogs: [
     { "id": 1, "title": "The Future of React Server Components", "date": "Oct 12, 2023", "readTime": "5 min read", "category": "Tech" },
     { "id": 2, "title": "Mastering Framer Motion layout animations", "date": "Sep 28, 2023", "readTime": "8 min read", "category": "Design" },
     { "id": 3, "title": "Why I switched from VS Code to Neovim", "date": "Aug 15, 2023", "readTime": "6 min read", "category": "Productivity" }
@@ -106,7 +117,7 @@ const MOCK_DATA = {
 };
 
 export default function App() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<PortfolioDataTypes | null>(null);
   const [isDark, setIsDark] = useState(false); // Default dark mode
   const { setTheme } = useTheme()
 

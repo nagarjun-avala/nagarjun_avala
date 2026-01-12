@@ -1,9 +1,10 @@
-import React from 'react'
 import { Moon, Sun } from "lucide-react";
 import { Button } from "./ui/button";
 
 type Props = {
-    toggleTheme: () => void, isDark: boolean, sections: {
+    toggleTheme: () => void
+    isDark: boolean
+    sections: {
         hero: boolean;
         about: boolean;
         projects: any;

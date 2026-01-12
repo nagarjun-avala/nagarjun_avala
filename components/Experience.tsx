@@ -1,6 +1,5 @@
-import React from 'react'
-import { ExperienceItem as Experience } from '@/lib/types';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Experience } from '@/lib/types';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Code, Globe } from 'lucide-react';
