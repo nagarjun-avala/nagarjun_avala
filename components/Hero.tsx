@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Hero } from '@/lib/types'
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 type Props = {
     data: Hero
@@ -23,13 +24,12 @@ export const HeroSection = ({ data }: Props) => {
 
     if (!data) return null;
 
-
     return (
         <section id="hero" className="min-h-screen flex items-center justify-center relative overflow-hidden px-4">
             {/* Background Mesh */}
             <div className="absolute inset-0 z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-rose-400/20 dark:bg-rose-500/10 blur-[120px] rounded-full animate-pulse" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-indigo-400/20 dark:bg-indigo-600/10 blur-[120px] rounded-full" />
+                <div className="absolute top-[-10%] left-[-10%] w-125 h-125 bg-rose-400/20 dark:bg-rose-500/10 blur-[120px] rounded-full animate-pulse" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-150 h-150 bg-indigo-400/20 dark:bg-indigo-600/10 blur-[120px] rounded-full" />
             </div>
 
             <div className="relative z-10 text-center">
@@ -55,7 +55,7 @@ export const HeroSection = ({ data }: Props) => {
                             </motion.span>
                         </AnimatePresence>
                     </div>
-                    <span className="block text-transparent bg-clip-text bg-gradient-to-b from-slate-900 to-slate-500 dark:from-white dark:to-slate-600 text-4xl md:text-6xl mt-2">
+                    <span className="block text-transparent bg-clip-text bg-linear-to-b from-slate-900 to-slate-500 dark:from-white dark:to-slate-600 text-4xl md:text-6xl mt-2">
                         {data.titleSuffix}
                     </span>
                 </h1>
@@ -65,7 +65,11 @@ export const HeroSection = ({ data }: Props) => {
                 </motion.p>
 
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-12 flex justify-center gap-4">
-                    <Button size="lg" className="rounded-full text-base font-bold shadow-lg shadow-rose-500/20" asChild><a href="#work">{data.ctaPrimary}</a></Button>
+                    <Button size="lg" className="rounded-full text-base font-bold shadow-lg shadow-rose-500/20" asChild>
+                        <Link href={"#work"}>
+                            {data.ctaPrimary}
+                        </Link>
+                    </Button>
                     <Button size="lg" variant="outline" className="rounded-full text-base" asChild><a href="#contact">{data.ctaSecondary}</a></Button>
                 </motion.div>
             </div>

@@ -11,108 +11,180 @@ import ExperienceSection from '@/components/Experience';
 import BlogsSection from '@/components/Blogs';
 import Cursor from '@/components/Cursor';
 import Navbar from '@/components/Navbar';
-import { About, Blog, Experience, Hero, Meta, Project } from '@/lib/types';
+import { About, Blog, Certification, Education, Experience, Hero, Meta, Project, TechStack } from '@/lib/types';
+import ProjectDetail from '@/components/ProjectDetail';
+import SkillsSection from '@/components/Skills';
+import EducationSection from '@/components/Education';
+import CertificationsSection from '@/components/Certifications';
+import BlogDetail from '@/components/BlogDetail';
+import { calculateTotalExperience, formatDate, formatExperience } from '@/lib/utils';
 
 interface PortfolioDataTypes {
   name: string
   meta: Meta
   hero: Hero
   about: About
+  techStack: TechStack
+  education: Education[]
+  certifications: Certification[]
   projects: Project[]
   experience: Experience[]
   blogs: Blog[]
 }
 
 const MOCK_DATA: PortfolioDataTypes = {
-  name: "Nagarjun Avala",
-  meta: {
-    title: "Creative Developer Portfolio",
-    email: "nagarjun.avala.official@gmail.com"
+  "name": "Nagarjun Avala",
+  "meta": {
+    "title": "Nagarjun Avala | Full Stack Developer",
+    "email": "nagarjun.avala.official@gmail.com",
+    "phone": "+91 8374017459"
   },
-  hero: {
-    badge: "Open to Work & Collaborations",
-    roles: ["Web Developer"],
-    titlePrefix: "I am a",
-    titleSuffix: "& Aspiring DevOps Engineer",
-    description: "Bridging the gap between code and infrastructure with precision and chaos-engineering.",
-    ctaPrimary: "Explore My Work",
-    ctaSecondary: "Contact Me"
+  "hero": {
+    "badge": "Open to Work & Collaborations",
+    "roles": ["Full Stack Developer", "Technical Entrepreneur"],
+    "titlePrefix": "I am a",
+    "titleSuffix": "& Aspiring DevOps Engineer",
+    "description": "Building scalable EdTech solutions with modern web technologies and cloud infrastructure. Proven track record in full lifecycle product development.",
+    "ctaPrimary": "Explore My Work",
+    "ctaSecondary": "Contact Me"
   },
-  about: {
-    title: "",
-    description: "I specialize in building performant, accessible, and beautiful web applications. Currently obsessed with React, Framer Motion, and micro-interactions.",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
-    experience: {
-      years: "5+",
-      label: "Years of Experience"
+  "about": {
+    "title": "Hi, I'm Nagarjun.",
+    "description": "Full-stack developer and technical entrepreneur with proven experience building scalable EdTech solutions. Led product development through complete lifecycle from ideation to deployment. Strong foundation in modern web technologies, DevOps practices, and user-centric design.",
+    "image": "/profile.jpg",
+    location: "Hyderabad, India",
+    "languages": ["English (Professional)", "Hindi (Professional)", "Telugu (Native)"],
+    "experience": {
+      "years": 2,
+      months: 1,
+      "label": "of Experience",
+      display: "2+ Years",
+      displaySuffix: "Years"
     },
-    skills: ["JavaScript", "React", "Next.js", "TypeScript", "Node.js", "Tailwind", "Framer Motion", "Three.js", "PostgreSQL", "AWS"]
+    "skills": ["JavaScript", "React.js", "Next.js", "Node.js", "AWS", "Docker", "Kubernetes", "TypeScript", "SQL", "C++"]
   },
-  projects: [
+  "techStack": {
+    "Languages": ["JavaScript", "TypeScript", "C++", "Python", "SQL", "HTML5", "CSS3"],
+    "Frontend": ["React.js", "Next.js", "Aceternity UI", "Tailwind CSS", "Material-UI", "Responsive Design"],
+    "Backend": ["Node.js", "Express.js", "RESTful APIs", "GraphQL", "WebSockets"],
+    "DevOps & Cloud": ["Git", "GitHub Actions", "CI/CD", "AWS (EC2, S3, Lambda)", "Docker", "Kubernetes"],
+    "Databases": ["MySQL", "PostgreSQL", "MongoDB", "Redis"],
+    "Tools": ["Agile/Scrum", "TDD", "Performance Optimization", "Analytics"]
+  },
+  "education": [
     {
-      "id": 1,
-      "cat": "E-Commerce",
-      "title": "Neon Market",
-      "desc": "Next-gen shopping experience with 3D product previews.",
-      "img": "https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&w=800&q=80",
-      "tags": ["React", "Three.js", "Shopify"]
+      "id": "1",
+      "degree": "Bachelor of Technology in Computer Science",
+      "institution": "Jawaharlal Nehru Technological University Hyderabad (JNTUH)",
+      "location": "Hyderabad, India",
+      "year": "Aug 2019 - Jul 2023",
+      "coursework": ["Data Structures", "Algorithms", "Database Management", "Operating Systems", "Software Engineering", "Cloud Computing"]
     },
     {
-      "id": 2,
-      "cat": "SaaS Platform",
-      "title": "Flow Dashboard",
-      "desc": "Real-time analytics platform for enterprise teams.",
-      "img": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
-      "tags": ["Next.js", "D3.js", "Supabase"]
+      id: "2",
+      degree: "Pre-university",
+      institution: "Jawahar Navodaya Vidyalaya (JNV BU)",
+      location: "Bengaluru,India",
+      year: "April 2016 - Mar 2018",
+      coursework: ["Mathematics", "Physics", "Chemistry", "C++"]
     },
     {
-      "id": 3,
-      "cat": "3D Experience",
-      "title": "Orbit Visuals",
-      "desc": "Interactive audio-reactive visualizer in the browser.",
-      "img": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
-      "tags": ["WebGL", "GLSL", "React"]
-    },
-    {
-      "id": 4,
-      "cat": "AI Integration",
-      "title": "Brainwave",
-      "desc": "Generative AI interface for creative writing.",
-      "img": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=800&q=80",
-      "tags": ["OpenAI", "Node.js", "Tailwind"]
+      id: "3",
+      degree: "High School",
+      institution: "Jawahar Navodaya Vidyalaya (JNV KNR)",
+      location: "Karimnagar,India",
+      year: "April 2015 - Mar 2016",
+      coursework: []
     }
   ],
-  experience: [
+  "certifications": [
     {
-      "id": "3",
-      "start": new Date("2023-02-01"),
-      "end": new Date("2023-05-01"),
-      "role": "Entrepreneur",
-      "company": "J Hub",
-      "desc": "Award-winning WebGL sites for top clients."
+      "id": "1",
+      "title": "Introduction to Data Analytics",
+      "issuer": "IBM",
+      issueDate: new Date("2023-05-01"),
+      credentialID: "NEM77ESNJQMW",
+      credentialURL: "https://coursera.org/share/9515b89761bbfad3592a481e1d6d9c0f",
+      "type": "Certification"
     },
+    {
+      "id": "2",
+      "title": "Recognition for EdTech Innovation",
+      "issuer": "Wadhwani Foundation",
+      issueDate: new Date("2023-12-01"),
+      "credentialID": "WF-REC-2023",
+      "credentialURL": "https://buildaccelerator2023.s3.us-west-1.amazonaws.com/Build+Accelerator+-+LinkedIn.png",
+      "type": "Achievement",
+    },
+  ],
+  "projects": [
+    {
+      "id": "1",
+      "slug": "scalable-lms",
+      "cat": "EdTech",
+      "title": "Scalable LMS",
+      "desc": "Comprehensive LMS with real-time collaboration, video streaming, and progress tracking for 5000+ users.",
+      "img": "https://images.unsplash.com/photo-1501504905252-473c47e087f8?auto=format&fit=crop&w=1200&q=80",
+      "tags": ["React", "Node.js", "PostgreSQL", "AWS", "Docker"],
+      "liveLink": null,
+      "client": "Learnyte",
+      "role": "CTO & Lead Dev",
+      "year": "2023",
+      "challenge": "Scaling to support 5000+ concurrent users with real-time features and video streaming while maintaining high availability.",
+      "solution": "Implemented microservices architecture with containerized deployment (Docker) and AWS infrastructure, ensuring 99.9% availability. Integrated payment gateway and automated email notifications.",
+      "gallery": [
+        "https://images.unsplash.com/photo-1501504905252-473c47e087f8?auto=format&fit=crop&w=1200&q=80"
+      ]
+    },
+    {
+      "id": "2",
+      "slug": "portfolio-tools",
+      "cat": "Web / Tools",
+      "title": "Portfolio & Tools",
+      "desc": "High-performance portfolio with server-side rendering and custom analytics dashboard.",
+      "img": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
+      "tags": ["Next.js", "TypeScript", "Vercel", "Analytics"],
+      "liveLink": "https://nagarjun-avala.vercel.app",
+      "client": "Personal",
+      "role": "Full Stack Dev",
+      "year": "2024",
+      "challenge": "Achieving perfect performance scores and tracking granular user engagement without third-party bloat.",
+      "solution": "Leveraged Next.js server-side rendering for 95+ Lighthouse scores and built a custom analytics dashboard to track user engagement and optimize content delivery.",
+      "gallery": [
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80"
+      ]
+    }
+  ],
+  "experience": [
     {
       "id": "1",
       "start": new Date("2022-01-01"),
       "end": new Date("2024-01-01"),
-      "role": "Web Developer",
-      "company": "Learnyte",
-      "desc": "Leading design system & Next.js migration."
+      "role": "Chief Technology Officer & Web Developer",
+      "company": "Learnyte.com",
+      "desc": "Architected full-stack EdTech platform (5000+ users). Established DevOps pipeline with CI/CD (GitHub Actions) & Docker."
     },
     {
       "id": "2",
       "start": new Date("2023-10-01"),
       "end": new Date("2023-12-01"),
-      "role": "Entrepreneur",
-      "company": "Amazon Web Services(AWS)",
-      "desc": "Scaled MVP to 10k users with AWS & Node.js."
+      "role": "Technical Entrepreneur",
+      "company": "AWS Build Accelerator",
+      "desc": "Developed cloud-native EdTech solution using AWS (EC2, S3, Lambda). Implemented serverless architecture reducing costs by 45%."
     },
-
+    {
+      "id": "3",
+      "start": new Date("2023-02-01"),
+      "end": new Date("2023-05-01"),
+      "role": "Technical Entrepreneur",
+      "company": "J HUB Idea Accelerator",
+      "desc": "Led product lifecycle from ideation to MVP. Built interactive prototype achieving 85% positive user feedback."
+    }
   ],
-  blogs: [
-    { "id": 1, "title": "The Future of React Server Components", "date": "Oct 12, 2023", "readTime": "5 min read", "category": "Tech" },
-    { "id": 2, "title": "Mastering Framer Motion layout animations", "date": "Sep 28, 2023", "readTime": "8 min read", "category": "Design" },
-    { "id": 3, "title": "Why I switched from VS Code to Neovim", "date": "Aug 15, 2023", "readTime": "6 min read", "category": "Productivity" }
+  "blogs": [
+    { "id": "1", "title": "Optimizing EdTech Platforms for Scale", "date": "Jan 15, 2024", "readTime": "5 min read", "category": "System Design", "link": "#", "image": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=80", "content": "Building scalable educational technology requires a deep understanding of both user experience and system architecture. In this post, I explore the strategies we used to scale Learnyte to 5000+ users." },
+    { "id": "2", "title": "Building Cost-Effective Serverless Architectures on AWS", "date": "Dec 10, 2023", "readTime": "8 min read", "category": "Cloud", "link": "#", "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80", "content": "Serverless is not just a buzzword; it's a cost-saving strategy. Learn how migrating to AWS Lambda and S3 reduced our infrastructure costs by 45%." },
+    { "id": "3", "title": "From Ideation to MVP: Lessons from J HUB Accelerator", "date": "Jun 20, 2023", "readTime": "6 min read", "category": "Entrepreneurship", "link": "#", "image": "https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=1200&q=80", "content": "The journey from a napkin sketch to a functional product is filled with challenges. Here are the key lessons I learned while building my startup at the J HUB Idea Accelerator." }
   ]
 };
 
@@ -120,20 +192,36 @@ export default function App() {
   const [data, setData] = useState<PortfolioDataTypes | null>(null);
   const [isDark, setIsDark] = useState(false); // Default dark mode
   const { setTheme } = useTheme()
+  const [activePage, setActivePage] = useState('home'); // 'home' | 'project'
+  const [selectedProjectSlug, setSelectedProjectSlug] = useState<string | null>(null);
+  const [selectedBlogId, setSelectedBlogId] = useState<string | null>(null); // Changed to ID
 
   // Data Fetching Simulation
   useEffect(() => {
     const fetchData = async () => {
       // Simulate network request
       await new Promise(resolve => setTimeout(resolve, 800));
+      // const apiUri = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+      // const { data: res } = await fetch(`${apiUri}/portfolio`, {
+      //   method: 'GET'
+      // }).then(data => data.json()).catch((err) => toast(err.message ?? "Failed to fetch data"));
 
+      // console.log(res)
       // Calculate years of experience dynamically based on the earliest date found
-      let totalYears = "5+"; // fallback
+      let totalYears = 0; // fallback
+      let totalMonths = 0; // fallback
+
+      let displayStr = ""
+      let displaySuffixStr = ""
+      let showPlusBool = false
       if (MOCK_DATA.experience && MOCK_DATA.experience.length > 0) {
-        const startYears = MOCK_DATA.experience.map(exp => exp.start.getFullYear());
-        const minYear = Math.min(...startYears);
-        const currentYear = new Date().getFullYear();
-        totalYears = `${currentYear - minYear}+`;
+        const result = calculateTotalExperience(MOCK_DATA.experience);
+        const { display, displaySuffix, showPlus } = formatExperience(result.years, result.months)
+        totalYears = result.years;
+        totalMonths = result.months
+        displayStr = display
+        displaySuffixStr = displaySuffix ?? ""
+        showPlusBool = showPlus
       }
 
       // Create first name for dynamic title
@@ -150,8 +238,15 @@ export default function App() {
           title: `Hi, I'm ${firstName}.`, // Dynamic About Title
           experience: {
             ...MOCK_DATA.about.experience,
-            years: totalYears
-          }
+            years: totalYears,
+            months: totalMonths,
+            display: displayStr,
+            displaySuffix: displaySuffixStr,
+            sign: showPlusBool ? "+" : ""
+          },
+          // Inject languages here
+          languages: MOCK_DATA.about.languages,
+          location: MOCK_DATA.about.location
         }
       };
 
@@ -171,6 +266,27 @@ export default function App() {
     setTheme(isDark ? "dark" : "light")
   };
 
+  // Router Handlers
+  const handleProjectClick = (slug: string) => {
+    setSelectedProjectSlug(slug);
+    setActivePage('project');
+    // In a real app we'd use router.push, here we just set state
+    // window.history.pushState({}, "", `/projects/${slug}`); // Disabled for sandbox safety
+  };
+
+  const handleBlogClick = (id: string) => {
+    setSelectedBlogId(id);
+    setActivePage('blog');
+  };
+
+  const handleBackHome = () => {
+    setActivePage('home');
+    setSelectedProjectSlug(null);
+    setSelectedBlogId(null);
+    // window.history.pushState({}, "", "/"); // Disabled for sandbox safety
+  };
+
+
   if (!data) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white">
@@ -179,29 +295,52 @@ export default function App() {
     );
   }
 
-  // Calculate sections for Navbar based on available data
-  const sections = {
-    hero: !!data.hero,
-    about: !!data.about,
-    projects: data.projects && data.projects.length > 0,
-    experience: data.experience && data.experience.length > 0,
-    blogs: data.blogs && data.blogs.length > 0,
-  };
+  // Find active project for detail view
+  const activeProjectIndex = selectedProjectSlug ? data.projects.findIndex(p => p.slug === selectedProjectSlug) : -1;
+  const activeProject = activeProjectIndex !== -1 ? data.projects[activeProjectIndex] : null;
+  const prevProject = activeProjectIndex > 0 ? data.projects[activeProjectIndex - 1] : null;
+  const nextProject = activeProjectIndex < data.projects.length - 1 ? data.projects[activeProjectIndex + 1] : null;
+
+  // Find active blog for detail view
+  const activeBlog = selectedBlogId ? data.blogs.find(b => b.id === selectedBlogId) : null;
 
   return (
     <div className={`min-h-screen selection:bg-rose-500/30 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300`}>
       <Cursor />
-      <Navbar toggleTheme={toggleTheme} isDark={isDark} sections={sections} />
+
+      {/* Conditionally Render Navbar based on view (simplified in detail view) */}
+      <Navbar toggleTheme={toggleTheme} isDark={isDark} onNavClick={handleBackHome} isDetailView={activePage !== 'home'} />
 
       <main>
-        {sections.hero && <HeroSection data={data.hero} />}
-        {sections.about && <AboutSection data={data.about} />}
-        {sections.projects && <ProjectsSection projects={data.projects} />}
-        {sections.experience && <ExperienceSection experience={data.experience} />}
-        {sections.blogs && <BlogsSection blogs={data.blogs} />}
+        {activePage === 'home' && (
+          <>
+            <HeroSection data={data.hero} />
+            <AboutSection data={data.about} />
+            <SkillsSection techStack={data.techStack} />
+            <ProjectsSection projects={data.projects} onProjectClick={handleProjectClick} />
+            <ExperienceSection experience={data.experience} totalExperiance={data.about.experience.display} />
+            <EducationSection education={data.education} />
+            <CertificationsSection certifications={data.certifications} />
+            <BlogsSection blogs={data.blogs} onBlogClick={handleBlogClick} />
+            <ContactAndFooter email={data.meta.email} phone={data.meta.phone} name={data.name} />
+          </>
+        )}
+        {activePage === 'project' && (
+          <ProjectDetail
+            project={activeProject}
+            onBack={handleBackHome}
+            onNavigate={handleProjectClick}
+            prevProject={prevProject}
+            nextProject={nextProject}
+          />
+        )}
+        {activePage === 'blog' && (
+          <BlogDetail
+            blog={activeBlog}
+            onBack={handleBackHome}
+          />
+        )}
       </main>
-
-      <ContactAndFooter email={data?.meta?.email} name={data.name} />
     </div>
   );
 }

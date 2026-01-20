@@ -2,6 +2,24 @@
   "name": "nagarjun-avala-portfolio",
   "version": "0.1.0",
   "private": true,
+  "keywords": [
+    "portfolio",
+    "next js",
+    "Typescript",
+    "web developer",
+    "DevOps",
+    "cloud"
+  ],
+  "author": {
+    "name": "Nagarjun Avala",
+    "email": "nagarjun.avala.official@gmail.com"
+  },
+  "contributors": [
+    {
+    "name": "Nagarjun Avala",
+    "email": "nagarjun.avala.official@gmail.com"
+  }
+  ],
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -40,7 +58,6 @@
     "react-dom": "^19.2.3",
     "react-hook-form": "^7.60.0",
     "react-icons": "^5.5.0",
-    "resend": "^6.2.0-preview-contacts.0",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
