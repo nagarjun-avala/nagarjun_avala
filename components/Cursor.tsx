@@ -24,11 +24,11 @@ const Cursor = (props: Props) => {
     return (
         <>
             <motion.div
-                className="fixed top-0 left-0 w-4 h-4 rounded-full bg-rose-500 pointer-events-none z-[9999] mix-blend-difference hidden md:block"
+                className="fixed top-0 left-0 w-4 h-4 rounded-full bg-rose-500 pointer-events-none z-9999 mix-blend-difference hidden md:block"
                 style={{ x: mouseX, y: mouseY, translateX: 8, translateY: 8 }}
             />
             <motion.div
-                className="fixed top-0 left-0 w-8 h-8 rounded-full border border-rose-500 pointer-events-none z-[9998] hidden md:block"
+                className="fixed top-0 left-0 w-8 h-8 rounded-full border border-rose-500 pointer-events-none z-9998 hidden md:block"
                 style={{ x: cursorX, y: cursorY }}
             />
         </>

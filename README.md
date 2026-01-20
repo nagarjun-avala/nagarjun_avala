@@ -6,34 +6,17 @@ A modern, full-stack portfolio website built with Next.js 14, featuring a compre
 
 ## ✨ Features
 
-### 🎨 Frontend Experience
+### 🎨 Portfolio Experience
 
 - **Glassmorphism Design** - Modern UI with glass effects and neon accents
 - **Smooth Animations** - Powered by Framer Motion for buttery smooth interactions
 - **Responsive Layout** - Perfect on desktop, tablet, and mobile devices
 - **Dark Theme** - Eye-friendly dark mode with cyan/purple gradients
 - **Interactive Navigation** - Floating sidebar on desktop, bottom nav on mobile
-- **Scroll Progress** - Animated progress bar with neon glow effects
 
-### 📊 Admin Dashboard
-
-- **Secure Authentication** - JWT-based login with session management
-- **Analytics Dashboard** - Visitor tracking, geographic insights, and engagement metrics
-- **Content Management** - Full CRUD for projects, blog posts, skills, and experience
-- **Message Management** - Handle contact form submissions with status tracking
-- **Real-time Updates** - Live data synchronization across all components
-
-### 🛠️ Backend Power
-
-- **Database-Driven** - All content stored in MongoDB with Prisma ORM
-- **RESTful APIs** - Clean, documented API endpoints for all features
-- **Visitor Analytics** - IP-based tracking with geographic data and caching
-- **Contact System** - Form handling with spam protection and email notifications
-- **Performance Optimized** - Efficient queries, caching, and data fetching
+[//]: # (- **Scroll Progress** - Animated progress bar with neon glow effects)
 
 ## 🏗️ Tech Stack
-
-### Frontend
 
 - **Next.js 14** - React framework with App Router
 - **TypeScript** - Type-safe development
@@ -42,15 +25,6 @@ A modern, full-stack portfolio website built with Next.js 14, featuring a compre
 - **ShadCN/UI** - Component library
 - **React Hook Form** - Form validation
 - **Zod** - Schema validation
-
-### Backend
-
-- **Node.js** - JavaScript runtime
-- **Prisma ORM** - Database toolkit
-- **MongoDB** - NoSQL database
-- **JWT** - Authentication tokens
-- **bcryptjs** - Password hashing
-- **Resend/Nodemailer** - Email service
 
 ### Development Tools
 
@@ -72,8 +46,8 @@ A modern, full-stack portfolio website built with Next.js 14, featuring a compre
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/nagarjun-avala/portfolio.git
-   cd portfolio
+   git clone https://github.com/nagarjun-avala/nagarjun_avala.git
+   cd nagarjun_avala
    ```
 
 2. **Install dependencies**
@@ -91,21 +65,7 @@ A modern, full-stack portfolio website built with Next.js 14, featuring a compre
    Create a `.env.local` file in the root directory:
 
    ```env
-   # Database
-   DATABASE_URL="mongodb://localhost:27017/portfolio"
-   # or MongoDB Atlas URL:
-   # DATABASE_URL="mongodb+srv://username:password@cluster.mongodb.net/portfolio"
-
-   # Authentication
-   JWT_SECRET="your-super-secret-jwt-key-here"
-   NEXTAUTH_SECRET="your-nextauth-secret-here"
-
-   # Email (optional - for contact form)
-   RESEND_API_KEY="your-resend-api-key"
-   CONTACT_EMAIL="your-email@example.com"
-
-   # External APIs (optional)
-   IPAPI_KEY="your-ipapi-key-for-geolocation"
+   NEXT_PUBLIC_API_URL="your portfolio api url"
    ```
 
 4. **Database Setup**
@@ -147,12 +107,6 @@ A modern, full-stack portfolio website built with Next.js 14, featuring a compre
 
 portfolio/
 ├── app/
-│   ├── admin/                 # Admin dashboard pages
-│   ├── api/                   # API routes
-│   │   ├── analytics/         # Analytics endpoints
-│   │   ├── contact/           # Contact form handler
-│   │   ├── portfolio/         # Main portfolio data
-│   │   └── visitors/          # Visitor tracking
 │   ├── blog/                  # Blog pages
 │   ├── components/            # React components
 │   │   ├── DynamicHome.tsx
@@ -265,24 +219,6 @@ CONTACT_EMAIL="your-email@example.com"
 2. Seed initial data: `npx tsx scripts/seed.ts`
 3. Create admin user: `npx tsx scripts/create-admin.ts`
 
-## 📖 API Documentation
-
-### Public Endpoints
-
-- `GET /api/portfolio` - Fetch all portfolio data
-- `POST /api/contact` - Submit contact form
-- `POST /api/visitors` - Track visitor (automatic)
-- `GET /api/blog/[slug]` - Get blog post by slug
-
-### Admin Endpoints (Protected)
-
-- `POST /api/admin/auth/login` - Admin login
-- `POST /api/admin/auth/logout` - Admin logout
-- `GET /api/admin/auth/verify` - Verify session
-- `GET /api/analytics` - Get detailed analytics
-- `CRUD /api/admin/projects` - Manage projects
-- `CRUD /api/admin/blog` - Manage blog posts
-
 ## 🔧 Development Scripts
 
 ```bash
@@ -340,8 +276,6 @@ This project is open source and available under the [MIT License](LICENSE).
 - **UI Components** - ShadCN/UI library
 
 ## 📞 Contact
-
-###
 
 #### Nagarjun Avala
 
