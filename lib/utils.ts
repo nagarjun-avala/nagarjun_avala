@@ -1,6 +1,7 @@
 // lib/utils.ts
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { Experience } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -60,4 +61,90 @@ export function validateEnv() {
       throw new Error(`Missing required environment variable: ${envVar}`);
     }
   }
+}
+
+type DateRange = {
+  start: Date;
+  end: Date;
+};
+
+export function calculateTotalExperience(
+  experiences: Experience[]
+): { years: number; months: number; totalMonths: number } {
+  const now = new Date();
+
+  // 1️⃣ Normalize ranges
+  const ranges: DateRange[] = experiences.map(exp => ({
+    start: new Date(exp.start),
+    end: exp.end === "present" ? now : new Date(exp.end)
+  }));
+
+  // 2️⃣ Sort by start date
+  ranges.sort((a, b) => a.start.getTime() - b.start.getTime());
+
+  // 3️⃣ Merge overlapping ranges
+  const merged: DateRange[] = [];
+
+  for (const range of ranges) {
+    if (
+      !merged.length ||
+      range.start > merged[merged.length - 1].end
+    ) {
+      merged.push(range);
+    } else {
+      merged[merged.length - 1].end = new Date(
+        Math.max(
+          merged[merged.length - 1].end.getTime(),
+          range.end.getTime()
+        )
+      );
+    }
+  }
+
+  // 4️⃣ Calculate total months
+  let totalMonths = 0;
+
+  for (const range of merged) {
+    const yearsDiff =
+      range.end.getFullYear() - range.start.getFullYear();
+    const monthsDiff =
+      range.end.getMonth() - range.start.getMonth();
+
+    totalMonths += yearsDiff * 12 + monthsDiff;
+  }
+
+  // 5️⃣ Convert to years + months
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
+
+  return { years, months, totalMonths };
+}
+
+type ExperienceResult = {
+  display: string;
+  showPlus: boolean;
+  displaySuffix?: string;
+};
+
+export function formatExperience(
+  years: number,
+  months: number,
+): ExperienceResult {
+  // 🟢 Case 1: Less than 1 year → show months only
+  if (years === 0) {
+    return {
+      display: `${months} month${months > 1 ? "s" : ""}`,
+      displaySuffix: "month" + (months > 1 ? "s" : ""),
+      showPlus: false
+    };
+  }
+
+  // 🟢 Case 2: Years >= 1
+  const showPlus = months > 0;
+
+  return {
+    display: `${years}${showPlus ? "+" : ""} year${years > 1 ? "s" : ""}`,
+    displaySuffix: "year" + (years > 1 ? "s" : ""),
+    showPlus
+  };
 }

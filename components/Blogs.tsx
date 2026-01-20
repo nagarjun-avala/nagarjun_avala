@@ -7,9 +7,10 @@ import { Badge } from '@/components/ui/badge';
 
 type Props = {
     blogs: Blog[]
+    onBlogClick: (id: string) => void
 }
 
-const BlogsSection = ({ blogs }: Props) => {
+const BlogsSection = ({ blogs, onBlogClick }: Props) => {
     if (!blogs || blogs.length === 0) return null;
     return (
         <section id="blogs" className="py-32 px-4 max-w-7xl mx-auto">
@@ -27,14 +28,20 @@ const BlogsSection = ({ blogs }: Props) => {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
+                        onClick={() => onBlogClick(blog.id)}
                     >
                         <Card className="group cursor-pointer border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/40 hover:bg-white dark:hover:bg-slate-900/80 transition-colors h-full">
                             <div className="overflow-hidden rounded-t-xl relative aspect-video bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
-                                <div className="absolute inset-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
-                                    <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-500/20 flex items-center justify-center">
-                                        <ArrowUpRight className="text-rose-500 dark:text-rose-400" size={20} />
+                                {/* Using blog image if available, else placeholder icon */}
+                                {blog.image ? (
+                                    <img src={blog.image} alt={blog.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                                ) : (
+                                    <div className="absolute inset-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                                        <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-500/20 flex items-center justify-center">
+                                            <ArrowUpRight className="text-rose-500 dark:text-rose-400" size={20} />
+                                        </div>
                                     </div>
-                                </div>
+                                )}
                             </div>
                             <CardContent className="pt-6">
                                 <div className="flex items-center gap-2 mb-3 text-xs font-medium">

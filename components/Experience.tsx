@@ -7,9 +7,10 @@ import { Code, Globe } from 'lucide-react';
 
 type Props = {
     experience: Experience[]
+    totalExperiance: string
 }
 
-const ExperienceSection = ({ experience }: Props) => {
+const ExperienceSection = ({ experience, totalExperiance }: Props) => {
     if (!experience || experience.length === 0) return null;
 
     // Calculate dynamic years of experience
@@ -53,7 +54,7 @@ const ExperienceSection = ({ experience }: Props) => {
                                 transition={{ duration: 0.5, delay: i * 0.1 }}
                                 className="relative pl-8 md:pl-12"
                             >
-                                <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2 transition-all ${isActive ? 'bg-rose-500 border-rose-500 dark:shadow-[0_0_15px_rgba(244,63,94,0.6)]' : 'bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-600'}`} />
+                                <div className={`absolute -left-2.25 top-0 w-4 h-4 rounded-full border-2 transition-all ${isActive ? 'bg-rose-500 border-rose-500 dark:shadow-[0_0_15px_rgba(244,63,94,0.6)]' : 'bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-600'}`} />
 
                                 <Badge variant={isActive ? "default" : "secondary"} className="mb-2 font-mono">
                                     {`${formatDate(exp.start)} - ${formatDate(exp.end)}`}
@@ -79,7 +80,7 @@ const ExperienceSection = ({ experience }: Props) => {
                                 <div className="space-y-2">
                                     <div className="flex justify-between text-sm">
                                         <span className="text-slate-500 dark:text-slate-400">Total Experience</span>
-                                        <span className="font-bold text-slate-900 dark:text-white">{totalYears}+ Years</span>
+                                        <span className="font-bold text-slate-900 dark:text-white">{totalExperiance}</span>
                                     </div>
                                     <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                                         <motion.div

@@ -1,5 +1,5 @@
 "use client"
-import { ArrowRight, ArrowUpRight, Github, Linkedin, Terminal, Twitter } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Github, Linkedin, Phone, Terminal, Twitter } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
@@ -24,7 +24,7 @@ const LocalTime = () => {
 };
 
 // Combined Contact & Footer (Mega Footer)
-export const ContactAndFooter = ({ email, name }: { email: string, name: string }) => {
+export const ContactAndFooter = ({ email, name, phone }: { email: string, name: string, phone: string | undefined }) => {
     return (
         <footer id="contact" className="bg-slate-50 dark:bg-slate-950 pt-32 pb-12 border-t border-slate-200 dark:border-slate-900">
             <div className="max-w-7xl mx-auto px-4">
@@ -35,17 +35,19 @@ export const ContactAndFooter = ({ email, name }: { email: string, name: string 
                     <div className="flex flex-col justify-center text-center lg:text-left">
                         <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold text-slate-900 dark:text-white mb-8 tracking-tight leading-tight">
                             Let's build <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-purple-600 dark:from-rose-400 dark:to-purple-500">something epic.</span>
+                            <span className="text-transparent bg-clip-text bg-linear-to-r from-rose-500 to-purple-600 dark:from-rose-400 dark:to-purple-500">something epic.</span>
                         </h2>
-                        <div className="flex flex-col sm:flex-row items-center lg:items-start gap-6">
+                        <div className="flex flex-col sm:flex-row items-center gap-6">
                             <Button size="lg" className="text-xl h-auto py-4 px-8 rounded-full" asChild>
                                 <a href={`mailto:${email}`}>
                                     {email} <ArrowUpRight className="ml-2" size={24} />
                                 </a>
                             </Button>
-                            <p className="text-slate-500 dark:text-slate-400 max-w-md text-lg mt-2">
-                                Open for freelance projects, collaborations, and consulting opportunities.
-                            </p>
+                            {phone && (
+                                <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-lg">
+                                    <Phone size={20} /> {phone}
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -69,7 +71,7 @@ export const ContactAndFooter = ({ email, name }: { email: string, name: string 
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-slate-700 dark:text-slate-200">Message</label>
-                                    <Textarea placeholder="Tell me about your project..." className="min-h-[150px]" />
+                                    <Textarea placeholder="Tell me about your project..." className="min-h-37.5" />
                                 </div>
                                 <Button className="w-full font-bold h-12 text-md">Send Message</Button>
                             </CardContent>
