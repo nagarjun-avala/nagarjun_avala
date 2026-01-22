@@ -1,0 +1,8 @@
+{
+    "rewrites": [
+        {
+            "source": "/proxy/api/v1/:path*",
+            "destination": "http://YOUR_AWS_IP_HERE:5000/api/v1/:path*"
+        }
+    ]
+}
