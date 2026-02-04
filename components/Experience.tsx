@@ -1,3 +1,4 @@
+"use client"
 import { Experience } from '@/lib/types';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,7 +17,7 @@ const ExperienceSection = ({ experience, totalExperiance }: Props) => {
     // Calculate dynamic years of experience
     let totalYears = 0;
     if (experience.length > 0) {
-        const startYears = experience.map(exp => exp.start ? exp.start.getFullYear() : new Date().getFullYear());
+        const startYears = experience.map(exp => exp.start ? new Date(exp.start).getFullYear() : new Date().getFullYear());
         const minYear = Math.min(...startYears);
         const currentYear = new Date().getFullYear();
         totalYears = currentYear - minYear;
@@ -24,13 +25,13 @@ const ExperienceSection = ({ experience, totalExperiance }: Props) => {
 
     // Sort experience by end date (most recent first)
     const sortedExperience = [...experience].sort((a, b) => {
-        const dateA = a.end === "present" ? new Date() : new Date(a.end);
-        const dateB = b.end === "present" ? new Date() : new Date(b.end);
+        const dateA = (!a.end || a.end === "present") ? new Date() : new Date(a.end);
+        const dateB = (!b.end || b.end === "present") ? new Date() : new Date(b.end);
         return dateB.getTime() - dateA.getTime();
     });
 
-    const formatDate = (date: Date | "present") => {
-        if (date === "present") return "Present";
+    const formatDate = (date: string | Date | "present" | null) => {
+        if (!date || date === "present") return "Present";
         const d = new Date(date);
         return `${d.toLocaleString('default', { month: 'short' })} ${d.getFullYear()}`;
     };

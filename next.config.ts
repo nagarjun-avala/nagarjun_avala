@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   output: "standalone",
   reactStrictMode: true,
+  allowedDevOrigins: ["http://localhost:5000"],
   images: {
     remotePatterns: [
       {
@@ -13,7 +14,15 @@ const nextConfig: NextConfig = {
         pathname: "/nagarjun-avala.png",
       },
     ],
-  }
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/proxy/api/:path*",
+        destination: "http://18.61.161.64:5000/api/:path*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

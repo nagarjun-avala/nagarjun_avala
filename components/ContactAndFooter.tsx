@@ -1,6 +1,8 @@
 "use client"
 import { ArrowRight, ArrowUpRight, Github, Linkedin, Phone, Terminal, Twitter } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { api } from "@/lib/fetchApi";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
@@ -24,7 +26,48 @@ const LocalTime = () => {
 };
 
 // Combined Contact & Footer (Mega Footer)
-export const ContactAndFooter = ({ email, name, phone }: { email: string, name: string, phone: string | undefined }) => {
+import { Social } from "@/lib/types";
+
+export const ContactAndFooter = ({ email, name, phone, socials }: { email: string, name: string, phone: string | undefined, socials?: Social[] }) => {
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        message: ""
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async () => {
+        if (!formData.name || !formData.email || !formData.message) {
+            toast.error("Please fill in all fields");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            await api.post("/contact", formData);
+            toast.success("Message sent successfully!");
+            setFormData({ name: "", email: "", message: "" });
+        } catch (error: any) {
+            console.error("Submission error:", error);
+            toast.error(error.message || "Failed to send message. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const getIcon = (platform: string) => {
+        const p = platform.toLowerCase();
+        if (p.includes("github")) return <Github className="w-5 h-5" />;
+        if (p.includes("twitter") || p.includes("x")) return <Twitter className="w-5 h-5" />;
+        if (p.includes("linkedin")) return <Linkedin className="w-5 h-5" />;
+        return <ArrowUpRight className="w-5 h-5" />;
+    }
+
     return (
         <footer id="contact" className="bg-slate-50 dark:bg-slate-950 pt-32 pb-12 border-t border-slate-200 dark:border-slate-900">
             <div className="max-w-7xl mx-auto px-4">
@@ -62,18 +105,44 @@ export const ContactAndFooter = ({ email, name, phone }: { email: string, name: 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium text-slate-700 dark:text-slate-200">Name</label>
-                                        <Input placeholder="John Doe" />
+                                        <Input
+                                            name="name"
+                                            placeholder="John Doe"
+                                            value={formData.name}
+                                            onChange={handleChange}
+                                            disabled={isSubmitting}
+                                        />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium text-slate-700 dark:text-slate-200">Email</label>
-                                        <Input placeholder="john@example.com" type="email" />
+                                        <Input
+                                            name="email"
+                                            placeholder="john@example.com"
+                                            type="email"
+                                            value={formData.email}
+                                            onChange={handleChange}
+                                            disabled={isSubmitting}
+                                        />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-slate-700 dark:text-slate-200">Message</label>
-                                    <Textarea placeholder="Tell me about your project..." className="min-h-37.5" />
+                                    <Textarea
+                                        name="message"
+                                        placeholder="Tell me about your project..."
+                                        className="min-h-37.5"
+                                        value={formData.message}
+                                        onChange={handleChange}
+                                        disabled={isSubmitting}
+                                    />
                                 </div>
-                                <Button className="w-full font-bold h-12 text-md">Send Message</Button>
+                                <Button
+                                    className="w-full font-bold h-12 text-md"
+                                    onClick={handleSubmit}
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? "Sending..." : "Send Message"}
+                                </Button>
                             </CardContent>
                         </Card>
                     </div>
@@ -89,9 +158,20 @@ export const ContactAndFooter = ({ email, name, phone }: { email: string, name: 
                             Crafting digital experiences with code and creative design. Based in the Cloud.
                         </p>
                         <div className="flex gap-4">
-                            <Button variant="ghost" size="icon" className="rounded-full hover:bg-slate-200 dark:hover:bg-slate-800"><Github className="w-5 h-5" /></Button>
-                            <Button variant="ghost" size="icon" className="rounded-full hover:bg-slate-200 dark:hover:bg-slate-800"><Twitter className="w-5 h-5" /></Button>
-                            <Button variant="ghost" size="icon" className="rounded-full hover:bg-slate-200 dark:hover:bg-slate-800"><Linkedin className="w-5 h-5" /></Button>
+                            {socials && socials.map((social) => (
+                                <Button key={social.platform} variant="ghost" size="icon" className="rounded-full hover:bg-slate-200 dark:hover:bg-slate-800" asChild>
+                                    <a href={social.url} target="_blank" rel="noopener noreferrer" aria-label={social.platform}>
+                                        {getIcon(social.platform)}
+                                    </a>
+                                </Button>
+                            ))}
+                            {!socials && (
+                                <>
+                                    <Button variant="ghost" size="icon" className="rounded-full hover:bg-slate-200 dark:hover:bg-slate-800"><Github className="w-5 h-5" /></Button>
+                                    <Button variant="ghost" size="icon" className="rounded-full hover:bg-slate-200 dark:hover:bg-slate-800"><Twitter className="w-5 h-5" /></Button>
+                                    <Button variant="ghost" size="icon" className="rounded-full hover:bg-slate-200 dark:hover:bg-slate-800"><Linkedin className="w-5 h-5" /></Button>
+                                </>
+                            )}
                         </div>
                     </div>
 
