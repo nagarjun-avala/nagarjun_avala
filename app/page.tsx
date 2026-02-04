@@ -26,7 +26,7 @@ async function getData(): Promise<PortfolioDataTypes> {
     }
 
     // In SSR, we need absolute URL. 
-    console.log(`Fetching data from ${apiUri}/portfolio`);
+    // console.log(`Fetching data from ${apiUri}/portfolio`);
 
     const res = await fetch(`${apiUri}/portfolio`, {
       method: 'GET',
