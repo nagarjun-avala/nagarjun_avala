@@ -1,126 +1,95 @@
-# 🚀 Dynamic Portfolio Application
+# 🚀 Portfolio Frontend
 
-**Tech:** Next.js 14, TypeScript, Tailwind CSS, MongoDB, Prisma
-**Dev & Deployment:** Docker (optional), Vercel, Environment-based configuration
+The modern, responsive frontend for the Dynamic Portfolio, built with **Next.js 14**, **Tailwind CSS**, and **TypeScript**. This application delivers a premium user experience with smooth animations, dynamic content fetching, and a comprehensive admin interface.
 
-A production-ready portfolio application built to showcase projects, experience, and real-world engineering practices. Designed with scalability, maintainability, and deployment workflows in mind.
+## ✨ Features
 
-🔗 **Live Demo:** [https://nagarjun-avala.vercel.app](https://nagarjun-avala.vercel.app)
-
----
-
-## ✨ What This Project Demonstrates
-
-- Modern **Next.js App Router** architecture
-- Component-driven UI using **Tailwind CSS** and **ShadCN/UI**
-- Type-safe forms and validation with **React Hook Form** and **Zod**
-- Secure **admin authentication** using JWT and bcrypt
-- Database modeling and access with **Prisma + MongoDB**
-- Environment-based configuration for development and production
-- Real-world deployment experience (build → deploy → maintain)
-
----
-
-## 🧱 Core Features
-
-- Dynamic portfolio content (skills, projects, experience, blog)
-- Admin dashboard for content management
-- Visitor analytics with basic geographic insights
-- Secure contact form with validation and spam protection
-- Fully responsive UI with smooth animations (Framer Motion)
-
----
+- **Next.js App Router**: Utilizing React Server Components for optimal performance and SEO.
+- **Modern UI/UX**: Built with **Tailwind CSS** and **ShadCN/UI** for a polished, accessible design.
+- **Animations**: Rich interactions powered by **Framer Motion**.
+- **Admin Dashboard**: Secure interface for managing portfolio content (projects, blog, skills).
+- **Responsive Design**: Mobile-first architecture ensuring perfect rendering on all devices.
+- **Form Handling**: Type-safe forms with **React Hook Form** and **Zod** validation.
 
 ## 🛠️ Tech Stack
 
-### Frontend
-
-- Next.js 14 (App Router)
-- TypeScript
-- Tailwind CSS
-- Framer Motion
-- ShadCN/UI
-
-### Backend & Data
-
-- MongoDB
-- Prisma ORM
-- JWT authentication
-- bcrypt password hashing
-
-### Dev & Deployment
-
-- Git & GitHub
-- Environment variables (`.env`)
-- Vercel deployment
-- Docker (optional, for consistent local builds)
-- GitHub Actions (CI/CD)
-
----
-
-## 🔁 CI/CD Pipeline
-
-This project uses **GitHub Actions** to run a Continuous Integration (CI) pipeline on every push and pull request.
-
-### CI Workflow Includes
-
-- Dependency installation
-- Lint checks to enforce code quality
-- Production build validation
-
-This ensures that the application remains stable and deployable as new changes are introduced.
-
----
-
-## ⚙️ Local Setup
-
-```bash
-git clone https://github.com/nagarjun-avala/nagarjun_avala.git
-cd nagarjun_avala
-npm install
-npm run dev
-```
-
-Create a `.env.local` file:
-
-```env
-DATABASE_URL=your_mongodb_url
-JWT_SECRET=your_secret
-```
-
----
+- **Framework**: [Next.js 14](https://nextjs.org/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Components**: [ShadCN/UI](https://ui.shadcn.com/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Form Management**: [React Hook Form](https://react-hook-form.com/)
+- **Validation**: [Zod](https://zod.dev/)
 
 ## 📁 Project Structure
 
+```bash
+web-developer-folio/
+├── app/               # Next.js App Router pages and layouts
+│   ├── admin/         # Protected admin dashboard routes
+│   └── (public)/      # Public facing portfolio pages
+├── components/        # Reusable UI components
+│   ├── ui/            # Primitive ShadCN components
+│   └── ...            # Feature-specific components
+├── lib/               # Utility functions and shared logic
+├── public/            # Static assets
+└── package.json
 ```
-app/        → Pages and layouts (Next.js App Router)
-components/ → Reusable UI components
-lib/        → Database and utility logic
-prisma/     → Database schema
-scripts/    → Setup and admin utilities
-```
 
----
+## 🚦 Getting Started
 
-## 🎯 Why This Project Matters
+### Prerequisites
 
-This project goes beyond a static portfolio. It demonstrates how I approach real applications:
+- **Node.js** (v18 or higher)
+- **npm** or **pnpm**
 
-- clean and maintainable architecture
-- secure data handling and authentication
-- scalable UI components
-- production-ready deployment mindset
+### Installation
 
----
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/nagarjun-avala/nagarjun_avala.git
+    cd nagarjun_avala
+    ```
 
-## 📫 Contact
+2.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
 
-- 🌐 Portfolio: [https://nagarjun-avala.vercel.app](https://nagarjun-avala.vercel.app)
-- 💼 LinkedIn: [https://www.linkedin.com/in/nagarjun-avala/](https://www.linkedin.com/in/nagarjun-avala/)
-- 📧 Email: [nagarjun.avala.official@gmail.com](mailto:nagarjun.avala.official@gmail.com)
+3.  **Environment Setup**:
+    Create a `.env.local` file in the root directory:
+    ```env
+    NEXT_PUBLIC_API_URL="http://localhost:5000/api"
+    ```
+    *Note: Ensure this points to your running backend server.*
 
----
+### Running the Application
+
+-   **Development Mode**:
+    ```bash
+    npm run dev
+    ```
+    Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+-   **Production Build**:
+    ```bash
+    npm run build
+    npm start
+    ```
+
+-   **Linting**:
+    ```bash
+    npm run lint
+    ```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## 📝 License
 
-MIT
+This project is open source and available under the [MIT License](LICENSE).
