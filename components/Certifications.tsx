@@ -21,11 +21,15 @@ const CertificationsSection = ({ certifications }: Props) => {
                                 <Award size={20} />
                             </div>
                             <div>
-                                <h4 className="font-bold text-slate-900 dark:text-white text-sm leading-tight mb-1">{cert.title}</h4>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">{cert.issuer}</p>
+                                <h4 className="font-bold text-slate-900 dark:text-white text-sm leading-tight mb-1">{cert.name || cert.title}</h4>
+                                <p className="text-xs text-slate-500 dark:text-slate-400">{cert.organization || cert.issuer}</p>
                                 <div className="flex flex-wrap gap-2 mt-2">
-                                    <Badge variant="secondary" className="text-[10px] h-5 px-2">{cert.type}</Badge>
-                                    <span className="text-[10px] text-slate-400 flex items-center">{cert.issueDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+                                    {cert.category && <Badge variant="secondary" className="text-[10px] h-5 px-2">{cert.category}</Badge>}
+                                    {cert.issueDate && (
+                                        <span className="text-[10px] text-slate-400 flex items-center">
+                                            {new Date(cert.issueDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         </div>

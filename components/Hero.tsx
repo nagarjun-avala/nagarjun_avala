@@ -66,11 +66,13 @@ export const HeroSection = ({ data }: Props) => {
 
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-12 flex justify-center gap-4">
                     <Button size="lg" className="rounded-full text-base font-bold shadow-lg shadow-rose-500/20" asChild>
-                        <Link href={"#work"}>
+                        <Link href={data.ctaPrimaryLink || "#work"}>
                             {data.ctaPrimary}
                         </Link>
                     </Button>
-                    <Button size="lg" variant="outline" className="rounded-full text-base" asChild><a href="#contact">{data.ctaSecondary}</a></Button>
+                    <Button size="lg" variant="outline" className="rounded-full text-base" asChild>
+                        <a href={data.ctaSecondaryLink || "#contact"}>{data.ctaSecondary}</a>
+                    </Button>
                 </motion.div>
             </div>
         </section>

@@ -1,3 +1,4 @@
+"use client"
 import { motion } from 'framer-motion';
 import { About } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';

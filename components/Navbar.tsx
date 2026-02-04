@@ -1,21 +1,33 @@
+"use client"
 import { ArrowLeft, Menu, Moon, Sun, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence } from "motion/react";
 import { motion, useScroll } from "framer-motion";
+import { useTheme } from "next-themes";
+import Link from "next/link";
 
 type Props = {
-    toggleTheme: () => void;
-    isDark: boolean;
-    onNavClick: (link: string) => void;
     isDetailView: boolean;
 };
 
-const Navbar = ({ toggleTheme, isDark, onNavClick, isDetailView }: Props) => {
+const Navbar = ({ isDetailView }: Props) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isVisible, setIsVisible] = useState(true);
     const { scrollY } = useScroll();
     const lastYRef = useRef(0);
+    const { theme, setTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const isDark = theme === 'dark';
+
+    const toggleTheme = () => {
+        setTheme(isDark ? "light" : "dark");
+    };
 
     const navItems = [
         "Hero",
@@ -34,7 +46,7 @@ const Navbar = ({ toggleTheme, isDark, onNavClick, isDetailView }: Props) => {
             // Show navbar if scrolling up or at the top
             if (latest < previous || latest < 50) {
                 setIsVisible(true);
-            } else if (latest > previous && latest > 50) {
+            } else if (latest > previous && latest < 50) {
                 // Hide navbar if scrolling down
                 setIsVisible(false);
                 setIsMobileMenuOpen(false); // Close menu on hide
@@ -55,10 +67,12 @@ const Navbar = ({ toggleTheme, isDark, onNavClick, isDetailView }: Props) => {
                     <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => onNavClick("home")}
+                        asChild
                         className="gap-2"
                     >
-                        <ArrowLeft size={16} /> Back to Home
+                        <Link href="/">
+                            <ArrowLeft size={16} /> Back to Home
+                        </Link>
                     </Button>
                     <div className="w-px h-4 bg-slate-300 dark:bg-slate-700 mx-2" />
                     <Button
@@ -67,11 +81,11 @@ const Navbar = ({ toggleTheme, isDark, onNavClick, isDetailView }: Props) => {
                         onClick={toggleTheme}
                         className="rounded-full"
                     >
-                        {isDark ? (
+                        {mounted ? (isDark ? (
                             <Sun className="h-4 w-4" />
                         ) : (
                             <Moon className="h-4 w-4" />
-                        )}
+                        )) : <div className="w-4 h-4" />}
                     </Button>
                 </div>
             </motion.nav>
@@ -121,11 +135,11 @@ const Navbar = ({ toggleTheme, isDark, onNavClick, isDetailView }: Props) => {
                             onClick={toggleTheme}
                             className="rounded-full"
                         >
-                            {isDark ? (
+                            {mounted ? (isDark ? (
                                 <Sun className="h-4 w-4" />
                             ) : (
                                 <Moon className="h-4 w-4" />
-                            )}
+                            )) : <div className="w-4 h-4" />}
                         </Button>
                     </div>
                 </div>

@@ -20,14 +20,18 @@ const EducationSection = ({ education }: Props) => {
                                 <div className="p-2 bg-rose-100 dark:bg-rose-500/20 rounded-lg">
                                     <GraduationCap size={24} className="text-rose-600 dark:text-rose-400" />
                                 </div>
-                                <Badge variant="outline">{edu.year}</Badge>
+                                <Badge variant="outline">
+                                    {edu.startDate ? new Date(edu.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : ''}
+                                    {' - '}
+                                    {edu.endDate ? new Date(edu.endDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Present'}
+                                </Badge>
                             </div>
                             <CardTitle className="text-xl mb-1">{edu.degree}</CardTitle>
                             <CardDescription className="flex items-center gap-1">
                                 {edu.institution}, {edu.location}
                             </CardDescription>
                         </CardHeader>
-                        {edu.coursework.length > 0 && (
+                        {edu.coursework && edu.coursework.length > 0 && (
                             <CardContent>
                                 <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">Relevant Coursework:</p>
                                 <div className="flex flex-wrap gap-2">

@@ -76,7 +76,7 @@ export function calculateTotalExperience(
   // 1️⃣ Normalize ranges
   const ranges: DateRange[] = experiences.map(exp => ({
     start: new Date(exp.start),
-    end: exp.end === "present" ? now : new Date(exp.end)
+    end: (!exp.end || exp.end === "present") ? now : new Date(exp.end)
   }));
 
   // 2️⃣ Sort by start date

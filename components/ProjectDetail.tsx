@@ -121,11 +121,17 @@ const ProjectDetail = ({ project, onBack, onNavigate, prevProject, nextProject }
                 </div>
             </div>
 
-            {/* Next Project Nav (Simple) */}
+            {/* Next Project Nav */}
             <div className="mt-32 pt-12 border-t border-slate-200 dark:border-slate-800 flex justify-end">
-                <Button variant="ghost" size="lg" className="text-xl gap-4 hover:bg-transparent hover:text-rose-500" onClick={onBack}>
-                    Next Project <ArrowRight />
-                </Button>
+                {nextProject ? (
+                    <Button variant="ghost" size="lg" className="text-xl gap-4 hover:bg-transparent hover:text-rose-500" onClick={() => onNavigate(nextProject.slug)}>
+                        Next Project <ArrowRight />
+                    </Button>
+                ) : (
+                    <Button variant="ghost" size="lg" className="text-xl gap-4 hover:bg-transparent hover:text-rose-500" onClick={onBack}>
+                        Back to Work <ArrowRight />
+                    </Button>
+                )}
             </div>
         </div>
     );
